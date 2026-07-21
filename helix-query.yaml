@@ -1,0 +1,57 @@
+version: 1
+
+indices:
+  default:
+    include:
+      - '/**'
+    exclude:
+      - '/drafts/**'
+      - '/.backup/**'
+      - '/nav'
+      - '/footer'
+      - '/fragments/**'
+      - '/tools/sidekick/**'
+    target: /query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")
+      template:
+        select: head > meta[name="template"]
+        value: attribute(el, "content")
+      author:
+        select: head > meta[name="author"]
+        value: attribute(el, "content")
+      date:
+        select: head > meta[name="date"]
+        value: attribute(el, "content")
+      publisheddate:
+        select: head > meta[name="publisheddate"]
+        value: attribute(el, "content")
+      keywords:
+        select: head > meta[name="keywords"]
+        value: attribute(el, "content")
+      region:
+        select: head > meta[name="region"]
+        value: attribute(el, "content")
+      activity:
+        select: head > meta[name="activity"]
+        value: attribute(el, "content")
+      difficulty:
+        select: head > meta[name="difficulty"]
+        value: attribute(el, "content")
+      season:
+        select: head > meta[name="season"]
+        value: attribute(el, "content")
+      audience:
+        select: head > meta[name="audience"]
+        value: attribute(el, "content")
