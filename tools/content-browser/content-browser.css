@@ -1,16 +1,18 @@
 /* Content Browser DA app — self-contained styles (no external dependencies). */
 :root{
   --font:'Adobe Clean','Source Sans 3',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  --gray-50:#FFFFFF; --gray-75:#FDFDFD; --gray-100:#F8F8F8; --gray-200:#E6E6E6;
-  --gray-300:#D5D5D5; --gray-400:#B3B3B3; --gray-500:#909090; --gray-600:#6D6D6D;
-  --gray-700:#4B4B4B; --gray-800:#2C2C2C; --gray-900:#1B1B1B;
-  --blue-100:#E6F1FF; --blue-700:#1473E6; --blue-800:#0D66D0;
-  --green-100:#E4F5E9; --green-700:#12805C;
-  --orange-100:#FFF1DE; --orange-700:#C9720C;
+  /* Spectrum 2 gray ramp (light) */
+  --gray-50:#FFFFFF; --gray-75:#F8F8F8; --gray-100:#F3F3F3; --gray-200:#E1E1E1;
+  --gray-300:#DADADA; --gray-400:#C6C6C6; --gray-500:#8F8F8F; --gray-600:#717171;
+  --gray-700:#505050; --gray-800:#292929; --gray-900:#131313;
+  /* Spectrum 2 accent + status hues */
+  --blue-100:#E5F0FE; --blue-700:#3B63FB; --blue-800:#274DEA;
+  --green-100:#E7F6EC; --green-700:#05834E;
+  --orange-100:#FEEFD8; --orange-700:#C24E00;
   --purple-100:#F5EEFF; --purple-700:#8B3FE0;
   --teal-100:#DEF7F4; --teal-700:#0E8A85;
-  --red-100:#FFEBE7; --red-700:#D7373F;
-  --radius-s:6px; --radius-m:8px; --radius-pill:999px;
+  --red-100:#FFEBE7; --red-700:#D73220;
+  --radius-s:6px; --radius-m:8px; --radius-l:10px; --radius-pill:999px;
   --shadow-1:0 1px 2px rgba(27,27,27,0.08),0 1px 1px rgba(27,27,27,0.04);
   --shadow-2:0 4px 16px rgba(27,27,27,0.16);
 }
@@ -36,7 +38,7 @@
 .search-box input{ border:none; outline:none; font-size:12.5px; width:100%; background:transparent; font-family:var(--font); }
 
 /* Table */
-.table-card{ background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius-m); overflow:hidden; }
+.table-card{ background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius-l); overflow:hidden; }
 table{ width:100%; border-collapse:collapse; }
 thead th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--gray-600); padding:10px 14px; border-bottom:1px solid var(--gray-200); background:var(--gray-75); font-weight:700; }
 tbody td{ padding:10px 14px; border-bottom:1px solid var(--gray-100); font-size:13.5px; vertical-align:middle; }
