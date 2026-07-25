@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AEM Coder — Experience Modernization Console (Prototype)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="canvas-body">
+
+  <div class="ac-topbar">
+    <div class="logomark">A</div>
+    <div class="ac-title">Adobe Experience Manager</div>
+    <div class="appbar-spacer"></div>
+    <a class="ac-back" href="index.html">← Back to Document Authoring</a>
+    <div class="ac-support">◐ Request support</div>
+    <div class="avatar">B</div>
+  </div>
+
+  <div class="ac-shell">
+    <!-- Left: chat with the modernization agent -->
+    <div class="ac-chat">
+      <div class="ac-chat-body" id="chatBody">
+        <div class="ac-msg agent">
+          <div class="who">✦ Modernization Agent</div>
+          <div class="bubble">Hi Bill 👋 I can import content and code from an existing site into <b>wknd-advanced</b> on Document Authoring. Describe what you'd like to bring in, or try one of these:</div>
+          <div class="ac-chips" style="margin-top:10px;">
+            <div class="ac-chip" data-q="Import the About Us page from wknd-legacy.com">Import the About Us page from wknd-legacy.com</div>
+            <div class="ac-chip" data-q="Import styles from our old site">Import styles from our old site</div>
+            <div class="ac-chip" data-q="Migrate the /articles section into DA">Migrate the /articles section</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ac-input-wrap">
+        <div class="ac-input">
+          <textarea id="acPrompt" placeholder="Describe what to import, or ask the agent…"></textarea>
+          <div class="ac-input-tools">
+            <div class="ac-mode" id="acMode">
+              <button class="active" data-mode="plan">💡 Plan</button>
+              <button data-mode="execute">🪄 Execute</button>
+            </div>
+            <button class="ac-tool-icon" title="Attach a file or URL list">📎</button>
+            <button class="ac-tool-icon" title="Prompt queue">🕘</button>
+            <button class="ac-send" id="acSend" title="Send">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: workspace -->
+    <div class="ac-work">
+      <div class="ac-work-tabs">
+        <div class="ac-tab active" data-view="preview">◱ Preview</div>
+        <div class="ac-tab" data-view="document">▤ Document</div>
+        <div class="ac-tab" data-view="html">&lt;/&gt; HTML</div>
+        <div class="ac-tab" data-view="changes">⑃ Changes</div>
+        <div class="ac-work-tools">
+          <button class="ac-tool-icon" title="Refresh preview">↻</button>
+          <button class="ac-tool-icon" title="Open in new window">⤢</button>
+        </div>
+      </div>
+
+      <div class="ac-work-body">
+        <!-- Preview -->
+        <div class="ac-view" data-view="preview">
+          <div class="ac-browser">
+            <div class="ac-browser-bar">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="ac-browser-url">main--wknd-advanced--blofft1.aem.page/about-us</span>
+            </div>
+            <div class="ac-page-hero" style="background-image:url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1200&q=60')"></div>
+            <div class="ac-page-body">
+              <h1>About Us</h1>
+              <p>WKND is a lifestyle brand for those who live for the weekend. Imported from wknd-legacy.com and converted into a Document Authoring page, styles and blocks intact.</p>
+              <p>The best stories start where the pavement ends. Explore hand-picked adventures, local guides, and unforgettable views curated by the WKND team.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Document (authoring structure) -->
+        <div class="ac-view ac-hidden" data-view="document">
+          <div class="ac-doc-table">
+            <div class="dt-row"><div class="dt-k">hero</div><div class="dt-v">Image + &ldquo;About Us&rdquo; heading</div></div>
+            <div class="dt-row"><div class="dt-k">text</div><div class="dt-v">WKND is a lifestyle brand for those who live for the weekend…</div></div>
+            <div class="dt-row"><div class="dt-k">text</div><div class="dt-v">The best stories start where the pavement ends…</div></div>
+            <div class="dt-row"><div class="dt-k">metadata</div><div class="dt-v">Template: Article Page · Locale: en</div></div>
+          </div>
+        </div>
+
+        <!-- HTML -->
+        <div class="ac-view ac-hidden" data-view="html">
+          <div class="ac-code">&lt;div class="hero"&gt;
+  &lt;div&gt;
+    &lt;picture&gt;&lt;img src="/about-hero.jpg" alt="About Us"&gt;&lt;/picture&gt;
+    &lt;h1&gt;About Us&lt;/h1&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="text"&gt;
+  &lt;p&gt;WKND is a lifestyle brand for those who live for the weekend.&lt;/p&gt;
+&lt;/div&gt;</div>
+        </div>
+
+        <!-- Changes / diff -->
+        <div class="ac-view ac-hidden" data-view="changes">
+          <div class="ac-changes">
+            <div class="ac-changes-head">
+              <h3>4 files changed on branch <code>import/about-us</code></h3>
+              <button class="btn primary" id="pushBtn">⑃ Push to GitHub</button>
+            </div>
+            <div class="ac-file"><span class="new-badge">new</span><span class="fname">blocks/hero/hero.css</span><span class="adds">+42</span><span class="dels">−0</span></div>
+            <div class="ac-file"><span class="new-badge">new</span><span class="fname">blocks/hero/hero.js</span><span class="adds">+18</span><span class="dels">−0</span></div>
+            <div class="ac-file"><span class="fname">styles/styles.css</span><span class="adds">+27</span><span class="dels">−3</span></div>
+            <div class="ac-file"><span class="new-badge">new</span><span class="fname">about-us.html</span><span class="adds">+64</span><span class="dels">−0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ac-banner">
+        🧪 You're in demo mode — exploring with sample content.
+        <button class="btn" id="switchBtn">Switch site</button>
+        <button class="btn primary" id="uploadBtn">⬆ Upload content to DA</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // View selector
+  document.querySelectorAll('.ac-tab[data-view]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const v = tab.dataset.view;
+      document.querySelectorAll('.ac-tab[data-view]').forEach(t => t.classList.toggle('active', t === tab));
+      document.querySelectorAll('.ac-view').forEach(view => view.classList.toggle('ac-hidden', view.dataset.view !== v));
+    });
+  });
+
+  // Plan / Execute mode
+  document.querySelectorAll('#acMode button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#acMode button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    });
+  });
+
+  // Chat
+  const chatBody = document.getElementById('chatBody');
+  const promptEl = document.getElementById('acPrompt');
+
+  function addUser(text){
+    const el = document.createElement('div');
+    el.className = 'ac-msg user';
+    el.innerHTML = `<div class="who">Bill</div><div class="bubble">${text}</div>`;
+    chatBody.appendChild(el);
+  }
+  function addAgentPlan(){
+    const el = document.createElement('div');
+    el.className = 'ac-msg agent';
+    el.innerHTML = `
+      <div class="who">✦ Modernization Agent</div>
+      <div class="bubble">On it. Here's my plan to import that into <b>wknd-advanced</b> — switch to <b>Execute</b> mode to run it, then review the diff under <b>Changes</b> before pushing.</div>
+      <div class="ac-plan">
+        <div class="pl-head">Planned steps</div>
+        <div class="pl-step"><span class="pl-ck">✓</span>Crawl the source URL and extract page content</div>
+        <div class="pl-step"><span class="pl-ck">✓</span>Convert markup into DA blocks (hero, text)</div>
+        <div class="pl-step pending"><span class="pl-ck">•</span>Recreate styles as Edge Delivery CSS</div>
+        <div class="pl-step pending"><span class="pl-ck">•</span>Stage changes on branch <code>import/about-us</code></div>
+      </div>`;
+    chatBody.appendChild(el);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+  function send(text){
+    if(!text.trim()) return;
+    addUser(text);
+    promptEl.value = '';
+    chatBody.scrollTop = chatBody.scrollHeight;
+    setTimeout(addAgentPlan, 450);
+  }
+
+  document.getElementById('acSend').addEventListener('click', () => send(promptEl.value));
+  promptEl.addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(promptEl.value); } });
+  document.querySelectorAll('.ac-chip').forEach(c => c.addEventListener('click', () => send(c.dataset.q)));
+
+  document.getElementById('pushBtn').addEventListener('click', () => alert('Mockup: this would push the branch and open a pull request on GitHub for review.'));
+  document.getElementById('uploadBtn').addEventListener('click', () => alert('Mockup: this would upload the imported pages into Document Authoring (da.live).'));
+  document.getElementById('switchBtn').addEventListener('click', () => alert('Mockup: this would connect your own Edge Delivery GitHub project via the AEM Code Connector.'));
+</script>
+</body>
+</html>

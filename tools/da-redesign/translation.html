@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document Authoring — Translation (Redesign Prototype)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="appbar">
+    <div class="logomark">A</div>
+    <svg class="app-switcher" viewBox="0 0 24 24" fill="none"><path d="M4 5h4v4H4V5zm0 6h4v4H4v-4zm0 6h4v4H4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z" fill="currentColor"/></svg>
+    <div class="app-title">Document Authoring <small>Translation</small></div>
+    <div class="breadcrumb"><b>blofft1</b> / wknd-advanced</div>
+    <div class="appbar-spacer"></div>
+    <div class="appbar-icon">⌕</div>
+    <div class="appbar-icon">?</div>
+    <div class="appbar-icon" title="Inbox">🔔</div>
+    <div class="avatar">B</div>
+  </div>
+
+  <div class="shell">
+    <div class="rail">
+      <div class="rail-item">⌂</div>
+      <div class="rail-item active">▤</div>
+      <div class="rail-item">◱</div>
+      <div class="rail-item">💡</div>
+      <div class="rail-item rail-bottom">⚙</div>
+    </div>
+
+    <div class="main">
+      <div class="action-menu">
+        <div class="action-group">
+          <span class="action-group-label">Content</span>
+          <a class="action-item active" href="translation.html">🌐 Translation</a>
+          <a class="action-item" href="msm.html">🔗 MSM</a>
+          <a class="action-item" href="fragments.html">🧩 Fragments</a>
+          <a class="action-item" href="aemcoder.html">⬆ Import</a>
+        </div>
+        <div class="action-divider"></div>
+        <div class="action-group">
+          <span class="action-group-label">Governance</span>
+          <div class="action-item">⏱ Scheduler</div>
+          <div class="action-item">🔒 Permissions</div>
+        </div>
+      </div>
+
+      <div class="crumbs-row" style="border-radius:8px; border:1px solid var(--gray-200); margin-bottom:18px;">
+        <a class="crumb-link" href="index.html">⌂ blofft1</a>
+        <span class="crumb-sep">›</span>
+        <a class="crumb-link" href="index.html">wknd-advanced</a>
+        <span class="crumb-sep">›</span>
+        <span class="crumb-link active">Translation</span>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h1>Translation</h1>
+          <p>Manage locale rollout for wknd-advanced — see which languages are in sync with the English source, and start new translation jobs.</p>
+        </div>
+        <button class="btn primary" id="startJobBtn">+ Start Translation Job</button>
+      </div>
+
+      <div class="gov-strip" id="statStrip"></div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Locale</th>
+              <th>Pages</th>
+              <th>Status</th>
+              <th>Last Rolled Out</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="localeBody"></tbody>
+        </table>
+      </div>
+
+      <div class="parity-note" style="max-width:640px;"><b>Classic AEM equivalent:</b> Translation workflows (Translation Integration Framework + Language Copies). Machine-translated drafts are queued for human review before publish, same governance gate as before.</div>
+    </div>
+  </div>
+
+  <!-- Multi-step wizard -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h2>Start Translation Job</h2>
+          <div class="modal-step-indicator" id="stepIndicator">Step 1 of 4 — Scope</div>
+        </div>
+        <div class="modal-close" id="modalClose">✕</div>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn" id="wizBack">Back</button>
+        <button class="btn primary" id="wizNext">Next</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const localesData = [
+  {code:'en', label:'English (en)', pages:9, source:true, status:'source', lastRollout:'—'},
+  {code:'de', label:'German (de)', pages:9, source:false, status:'needs-update', lastRollout:'Jul 15, 2026'},
+  {code:'es', label:'Spanish (es)', pages:9, source:false, status:'in-sync', lastRollout:'Jul 20, 2026'},
+];
+
+const candidatePages = ['About Us', 'Already Investing', 'Articles Index', 'Events', 'Trips Worth Taking — Extras'];
+
+const statusLabel = {
+  source: 'Source locale', 'needs-update': 'Needs update', 'in-sync': 'Up to date', 'in-progress': 'Translation in progress',
+};
+
+function renderStats(){
+  const strip = document.getElementById('statStrip');
+  const needsUpdate = localesData.filter(l => l.status === 'needs-update').length;
+  const inSync = localesData.filter(l => l.status === 'in-sync').length;
+  const inProgress = localesData.filter(l => l.status === 'in-progress').length;
+  strip.innerHTML = `
+    <div class="gov-chip"><div><div class="num">${localesData.length - 1}</div><div class="lbl">Locales tracked</div></div></div>
+    <div class="gov-chip"><div><div class="num">${inSync}</div><div class="lbl">Up to date</div></div></div>
+    <div class="gov-chip warn"><div><div class="num">${needsUpdate}</div><div class="lbl">Needs update</div></div></div>
+    <div class="gov-chip"><div><div class="num">${inProgress}</div><div class="lbl">Jobs in progress</div></div></div>
+  `;
+}
+
+function renderLocaleTable(){
+  const body = document.getElementById('localeBody');
+  body.innerHTML = '';
+  localesData.forEach(l => {
+    const tr = document.createElement('tr');
+    const actionBtn = l.source
+      ? '<span class="muted">—</span>'
+      : (l.status === 'in-progress'
+          ? '<button class="btn" disabled>In progress…</button>'
+          : `<button class="btn ${l.status === 'needs-update' ? 'primary' : ''}" data-locale="${l.code}">${l.status === 'needs-update' ? 'Start Job' : 'View details'}</button>`);
+    tr.innerHTML = `
+      <td style="font-weight:600;">${l.label}</td>
+      <td>${l.pages}</td>
+      <td><span class="status ${l.status}"><span class="dot"></span>${statusLabel[l.status]}</span></td>
+      <td class="modified">${l.lastRollout}</td>
+      <td>${actionBtn}</td>
+    `;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll('button[data-locale]').forEach(btn => {
+    btn.addEventListener('click', () => openWizard(btn.dataset.locale));
+  });
+  renderStats();
+}
+
+// ---------- Wizard ----------
+let wizStep = 0; // 0 scope, 1 locales, 2 method, 3 review, 'done'
+let wizScope = new Set(['Trips Worth Taking — Extras']);
+let wizLocales = new Set();
+let wizMethod = 'machine';
+
+function openWizard(prefillLocale){
+  wizStep = 0;
+  wizScope = new Set(['Trips Worth Taking — Extras']);
+  wizLocales = new Set(prefillLocale ? [prefillLocale] : localesData.filter(l => l.status === 'needs-update').map(l => l.code));
+  wizMethod = 'machine';
+  document.getElementById('modalBackdrop').classList.add('open');
+  renderWizard();
+}
+function closeWizard(){
+  document.getElementById('modalBackdrop').classList.remove('open');
+}
+
+function toggleScope(page){
+  if(wizScope.has(page)) wizScope.delete(page); else wizScope.add(page);
+  renderWizard();
+}
+function toggleLocale(code){
+  if(wizLocales.has(code)) wizLocales.delete(code); else wizLocales.add(code);
+  renderWizard();
+}
+function setMethod(m){
+  wizMethod = m;
+  renderWizard();
+}
+
+function renderWizard(){
+  const indicator = document.getElementById('stepIndicator');
+  const body = document.getElementById('modalBody');
+  const back = document.getElementById('wizBack');
+  const next = document.getElementById('wizNext');
+
+  if(wizStep === 'done'){
+    indicator.textContent = 'Done';
+    back.style.display = 'none';
+    next.textContent = 'Close';
+    body.innerHTML = `
+      <div class="success-box">
+        <div class="success-icon">✓</div>
+        <h3 style="margin-bottom:6px;">Translation job started</h3>
+        <p style="color:var(--gray-600); margin:0;">Track progress in your Inbox. You'll be notified when drafts are ready for human review.</p>
+      </div>
+    `;
+    next.onclick = () => { closeWizard(); renderLocaleTable(); };
+    return;
+  }
+
+  back.style.display = wizStep === 0 ? 'none' : 'inline-block';
+  next.textContent = wizStep === 3 ? 'Confirm' : 'Next';
+
+  if(wizStep === 0){
+    indicator.textContent = 'Step 1 of 4 — Scope';
+    body.innerHTML = `<h3>Which pages need translation?</h3>` + candidatePages.map(p => `
+      <label class="wizard-option">
+        <input type="checkbox" ${wizScope.has(p) ? 'checked' : ''} onchange="toggleScope('${p}')">
+        <div><div class="lbl">${p}</div></div>
+      </label>
+    `).join('');
+  } else if(wizStep === 1){
+    indicator.textContent = 'Step 2 of 4 — Locales';
+    body.innerHTML = `<h3>Which locales should receive this?</h3>` + localesData.filter(l => !l.source).map(l => `
+      <label class="wizard-option">
+        <input type="checkbox" ${wizLocales.has(l.code) ? 'checked' : ''} onchange="toggleLocale('${l.code}')">
+        <div><div class="lbl">${l.label}</div><div class="desc">Currently: ${statusLabel[l.status]}</div></div>
+      </label>
+    `).join('');
+  } else if(wizStep === 2){
+    indicator.textContent = 'Step 3 of 4 — Method';
+    body.innerHTML = `
+      <h3>How should this be translated?</h3>
+      <label class="wizard-option">
+        <input type="radio" name="method" ${wizMethod === 'machine' ? 'checked' : ''} onchange="setMethod('machine')">
+        <div><div class="lbl">Machine translation</div><div class="desc">Fast draft, automatically queued for human review before publish.</div></div>
+      </label>
+      <label class="wizard-option">
+        <input type="radio" name="method" ${wizMethod === 'vendor' ? 'checked' : ''} onchange="setMethod('vendor')">
+        <div><div class="lbl">Send to translation vendor</div><div class="desc">Slower, higher fidelity — routes to your connected LSP.</div></div>
+      </label>
+    `;
+  } else if(wizStep === 3){
+    indicator.textContent = 'Step 4 of 4 — Review';
+    const localeNames = [...wizLocales].map(c => localesData.find(l => l.code === c).label).join(', ') || '(none selected)';
+    body.innerHTML = `
+      <h3>Review before starting</h3>
+      <div class="wizard-summary-line"><span>Pages</span><b>${wizScope.size}</b></div>
+      <div class="wizard-summary-line"><span>Locales</span><b>${localeNames}</b></div>
+      <div class="wizard-summary-line"><span>Method</span><b>${wizMethod === 'machine' ? 'Machine translation' : 'Translation vendor'}</b></div>
+      <div class="parity-note">This will translate ${wizScope.size} page(s) into ${wizLocales.size} locale(s) via ${wizMethod === 'machine' ? 'machine translation' : 'your translation vendor'}.</div>
+    `;
+  }
+}
+
+document.getElementById('wizNext').addEventListener('click', () => {
+  if(wizStep === 'done') return; // handled by its own onclick
+  if(wizStep === 3){
+    wizLocales.forEach(code => {
+      const loc = localesData.find(l => l.code === code);
+      if(loc){
+        loc.status = 'in-progress';
+        loc.lastRollout = 'Just started';
+        setTimeout(() => { loc.status = 'in-sync'; loc.lastRollout = 'Just now'; renderLocaleTable(); }, 4000);
+      }
+    });
+    wizStep = 'done';
+  } else {
+    wizStep++;
+  }
+  renderWizard();
+});
+document.getElementById('wizBack').addEventListener('click', () => {
+  if(typeof wizStep === 'number' && wizStep > 0){ wizStep--; renderWizard(); }
+});
+document.getElementById('modalClose').addEventListener('click', closeWizard);
+document.getElementById('modalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'modalBackdrop') closeWizard(); });
+document.getElementById('startJobBtn').addEventListener('click', () => openWizard(null));
+
+renderLocaleTable();
+</script>
+</body>
+</html>
