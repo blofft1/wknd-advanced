@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WKND Advanced — Document Authoring</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="/tools/da-redesign/styles.css">
 </head>
 <body>
 
@@ -22,12 +22,12 @@
 
   <div class="appsw-menu" id="appswMenu">
     <div class="appsw-label">Content</div>
-    <a class="appsw-item" href="workspace.html"><span class="si">🗂</span> Sites &amp; Content</a>
-    <a class="appsw-item" href="fragments.html"><span class="si">🧩</span> Content Fragments</a>
-    <a class="appsw-item" href="translation.html"><span class="si">🌐</span> Translation</a>
-    <a class="appsw-item" href="aemcoder.html"><span class="si">✦</span> Import (AEM Coder)</a>
+    <a class="appsw-item" href="/tools/da-redesign/workspace.html"><span class="si">🗂</span> Sites &amp; Content</a>
+    <a class="appsw-item" href="/tools/da-redesign/fragments.html"><span class="si">🧩</span> Content Fragments</a>
+    <a class="appsw-item" href="/tools/da-redesign/translation.html"><span class="si">🌐</span> Translation</a>
+    <a class="appsw-item" href="/tools/da-redesign/aemcoder.html"><span class="si">✦</span> Import (AEM Coder)</a>
     <div class="appsw-label">Governance</div>
-    <a class="appsw-item" href="msm.html"><span class="si">🔗</span> Multi-Site Management</a>
+    <a class="appsw-item" href="/tools/da-redesign/msm.html"><span class="si">🔗</span> Multi-Site Management</a>
     <a class="appsw-item" href="#" data-app="permissions"><span class="si">🔒</span> Permissions</a>
     <a class="appsw-item" href="#" data-app="workflow"><span class="si">✓</span> Workflow &amp; Governance</a>
     <a class="appsw-item" href="#" data-app="scheduler"><span class="si">⏱</span> Scheduler</a>
@@ -52,8 +52,8 @@
             <h1>WKND Advanced</h1>
             <div class="meta"><span class="status published"><span class="dot"></span>Published</span> · blofft1 / wknd-advanced · last published 2h ago</div>
             <div class="hero-actions">
-              <a class="btn primary" href="workspace.html">Open content</a>
-              <a class="btn" href="workspace.html">Preview live</a>
+              <a class="btn primary" href="/tools/da-redesign/workspace.html">Open content</a>
+              <a class="btn" href="/tools/da-redesign/workspace.html">Preview live</a>
               <button class="btn" id="newPageBtn">+ New page</button>
             </div>
           </div>
@@ -73,7 +73,7 @@
         <div class="dash-grid">
           <div class="dash-col">
             <div class="card">
-              <div class="card-head"><h3>Site structure</h3><a href="workspace.html">Open in Content →</a></div>
+              <div class="card-head"><h3>Site structure</h3><a href="/tools/da-redesign/workspace.html">Open in Content →</a></div>
               <div class="mtree" id="mtree"></div>
             </div>
             <div class="card">
@@ -120,7 +120,7 @@
             <div class="llmo-metric"><div class="n">18%</div><div class="l">Share of voice</div><div class="d">vs 4 competitors</div></div>
           </div>
           <div class="card">
-            <div class="card-head"><h3>Opportunities · readability &amp; structure</h3><a href="workspace.html">Fix in Content →</a></div>
+            <div class="card-head"><h3>Opportunities · readability &amp; structure</h3><a href="/tools/da-redesign/workspace.html">Fix in Content →</a></div>
             <div id="llmoOps"></div>
           </div>
         </div>
@@ -193,7 +193,7 @@ function renderFind(){
   if(!q){ findResults.classList.remove('open'); return; }
   const hits = findIndex.filter((r) => r.t.toLowerCase().includes(q) || r.p.toLowerCase().includes(q)).slice(0, 7);
   findResults.innerHTML = hits.length
-    ? hits.map((r) => `<a class="find-row" href="workspace.html"><span class="fr-type ${r.c}">${r.ty}</span>${r.t}<span class="fr-path">${r.p}</span></a>`).join('')
+    ? hits.map((r) => `<a class="find-row" href="/tools/da-redesign/workspace.html"><span class="fr-type ${r.c}">${r.ty}</span>${r.t}<span class="fr-path">${r.p}</span></a>`).join('')
     : '<div class="find-row" style="color:var(--gray-500);cursor:default;">No matches</div>';
   findResults.classList.add('open');
 }
@@ -269,7 +269,7 @@ mtree.addEventListener('click', (e) => {
     return;
   }
   const pageRow = e.target.closest('.tree-row.page');
-  if(pageRow){ window.location.href = 'workspace.html?page=' + encodeURIComponent(pageRow.dataset.page); }
+  if(pageRow){ window.location.href = '/tools/da-redesign/workspace.html?page=' + encodeURIComponent(pageRow.dataset.page); }
 });
 
 /* ---------- Latest updates ---------- */
