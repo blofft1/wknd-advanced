@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document Authoring — MSM (Redesign Prototype)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="appbar">
+    <div class="logomark">A</div>
+    <svg class="app-switcher" viewBox="0 0 24 24" fill="none"><path d="M4 5h4v4H4V5zm0 6h4v4H4v-4zm0 6h4v4H4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z" fill="currentColor"/></svg>
+    <div class="app-title">Document Authoring <small>Multi Site Management</small></div>
+    <div class="breadcrumb"><b>blofft1</b> / wknd-advanced</div>
+    <div class="appbar-spacer"></div>
+    <div class="appbar-icon">⌕</div>
+    <div class="appbar-icon">?</div>
+    <div class="appbar-icon" title="Inbox">🔔</div>
+    <div class="avatar">B</div>
+  </div>
+
+  <div class="shell">
+    <div class="rail">
+      <div class="rail-item">⌂</div>
+      <div class="rail-item active">▤</div>
+      <div class="rail-item">◱</div>
+      <div class="rail-item">💡</div>
+      <div class="rail-item rail-bottom">⚙</div>
+    </div>
+
+    <div class="main">
+      <div class="action-menu">
+        <div class="action-group">
+          <span class="action-group-label">Content</span>
+          <a class="action-item" href="translation.html">🌐 Translation</a>
+          <a class="action-item active" href="msm.html">🔗 MSM</a>
+          <a class="action-item" href="fragments.html">🧩 Fragments</a>
+          <a class="action-item" href="aemcoder.html">⬆ Import</a>
+        </div>
+        <div class="action-divider"></div>
+        <div class="action-group">
+          <span class="action-group-label">Governance</span>
+          <div class="action-item">⏱ Scheduler</div>
+          <div class="action-item">🔒 Permissions</div>
+        </div>
+      </div>
+
+      <div class="crumbs-row" style="border-radius:8px; border:1px solid var(--gray-200); margin-bottom:18px;">
+        <a class="crumb-link" href="index.html">⌂ blofft1</a>
+        <span class="crumb-sep">›</span>
+        <a class="crumb-link" href="index.html">wknd-advanced</a>
+        <span class="crumb-sep">›</span>
+        <span class="crumb-link active">MSM</span>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h1>Multi Site Management</h1>
+          <p><b>wknd-advanced</b> is the blueprint. Live copies inherit its structure, components, and config until a page is locally overridden — that's what "diverged" means below.</p>
+        </div>
+        <button class="btn primary" id="rolloutBtn">↻ Roll Out Changes</button>
+      </div>
+
+      <div class="gov-strip" id="statStrip"></div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Live Copy</th>
+              <th>Based On</th>
+              <th>Diverged Pages</th>
+              <th>Status</th>
+              <th>Last Rolled Out</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="copyBody"></tbody>
+        </table>
+      </div>
+
+      <div class="parity-note" style="max-width:640px;"><b>Classic AEM equivalent:</b> Multi Site Management — a blueprint page tree with live copies and rollout configs. Structural changes propagate down; local page-level overrides are preserved and flagged, not silently overwritten.</div>
+    </div>
+  </div>
+
+  <!-- Multi-step wizard -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h2>Roll Out Changes</h2>
+          <div class="modal-step-indicator" id="stepIndicator">Step 1 of 3 — Live Copies</div>
+        </div>
+        <div class="modal-close" id="modalClose">✕</div>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn" id="wizBack">Back</button>
+        <button class="btn primary" id="wizNext">Next</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const liveCopies = [
+  {code:'emea', name:'wknd-advanced-emea', title:'WKND Advanced — EMEA', diverged:3, status:'diverged', lastRollout:'Jun 2, 2026'},
+  {code:'latam', name:'wknd-advanced-latam', title:'WKND Advanced — LATAM', diverged:0, status:'in-sync', lastRollout:'Jul 18, 2026'},
+  {code:'apac', name:'wknd-advanced-apac', title:'WKND Advanced — APAC', diverged:5, status:'diverged', lastRollout:'May 10, 2026'},
+];
+
+const changedItems = [
+  'Global Navigation (nav)',
+  'Global Footer (footer)',
+  'New page: Trips Worth Taking — Extras',
+];
+
+const statusLabel = { 'in-sync': 'In sync', diverged: 'Diverged', 'in-progress': 'Rolling out…' };
+
+function renderStats(){
+  const strip = document.getElementById('statStrip');
+  const diverged = liveCopies.filter(c => c.status === 'diverged').length;
+  const inSync = liveCopies.filter(c => c.status === 'in-sync').length;
+  const totalDiverged = liveCopies.reduce((sum, c) => sum + c.diverged, 0);
+  strip.innerHTML = `
+    <div class="gov-chip"><div><div class="num">${liveCopies.length}</div><div class="lbl">Live copies</div></div></div>
+    <div class="gov-chip"><div><div class="num">${inSync}</div><div class="lbl">In sync</div></div></div>
+    <div class="gov-chip bad"><div><div class="num">${diverged}</div><div class="lbl">Need rollout</div></div></div>
+    <div class="gov-chip warn"><div><div class="num">${totalDiverged}</div><div class="lbl">Diverged pages total</div></div></div>
+  `;
+}
+
+function renderCopyTable(){
+  const body = document.getElementById('copyBody');
+  body.innerHTML = '';
+  liveCopies.forEach(c => {
+    const tr = document.createElement('tr');
+    const actionBtn = c.status === 'in-progress'
+      ? '<button class="btn" disabled>Rolling out…</button>'
+      : `<button class="btn ${c.status === 'diverged' ? 'primary' : ''}" data-copy="${c.code}">${c.status === 'diverged' ? 'Review & Roll Out' : 'View details'}</button>`;
+    tr.innerHTML = `
+      <td style="font-weight:600;">${c.name}</td>
+      <td class="modified">wknd-advanced (Blueprint)</td>
+      <td>${c.diverged}</td>
+      <td><span class="status ${c.status}"><span class="dot"></span>${statusLabel[c.status]}</span></td>
+      <td class="modified">${c.lastRollout}</td>
+      <td>${actionBtn}</td>
+    `;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll('button[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => openWizard(btn.dataset.copy));
+  });
+  renderStats();
+}
+
+// ---------- Wizard ----------
+let wizStep = 0; // 0 copies, 1 items, 2 review, 'done'
+let wizCopies = new Set();
+let wizItems = new Set(changedItems);
+
+function openWizard(prefillCopy){
+  wizStep = 0;
+  wizCopies = new Set(prefillCopy ? [prefillCopy] : liveCopies.filter(c => c.status === 'diverged').map(c => c.code));
+  wizItems = new Set(changedItems);
+  document.getElementById('modalBackdrop').classList.add('open');
+  renderWizard();
+}
+function closeWizard(){
+  document.getElementById('modalBackdrop').classList.remove('open');
+}
+function toggleCopy(code){
+  if(wizCopies.has(code)) wizCopies.delete(code); else wizCopies.add(code);
+  renderWizard();
+}
+function toggleItem(item){
+  if(wizItems.has(item)) wizItems.delete(item); else wizItems.add(item);
+  renderWizard();
+}
+
+function renderWizard(){
+  const indicator = document.getElementById('stepIndicator');
+  const body = document.getElementById('modalBody');
+  const back = document.getElementById('wizBack');
+  const next = document.getElementById('wizNext');
+
+  if(wizStep === 'done'){
+    indicator.textContent = 'Done';
+    back.style.display = 'none';
+    next.textContent = 'Close';
+    const names = [...wizCopies].map(code => liveCopies.find(c => c.code === code).name).join(', ') || 'no live copies';
+    body.innerHTML = `
+      <div class="success-box">
+        <div class="success-icon">✓</div>
+        <h3 style="margin-bottom:6px;">Rollout started</h3>
+        <p style="color:var(--gray-600); margin:0;">${names} will sync within a few minutes. You can track progress in your Inbox.</p>
+      </div>
+    `;
+    next.onclick = () => { closeWizard(); renderCopyTable(); };
+    return;
+  }
+
+  back.style.display = wizStep === 0 ? 'none' : 'inline-block';
+  next.textContent = wizStep === 2 ? 'Confirm' : 'Next';
+
+  if(wizStep === 0){
+    indicator.textContent = 'Step 1 of 3 — Live Copies';
+    body.innerHTML = `<h3>Which live copies should receive this rollout?</h3>` + liveCopies.map(c => `
+      <label class="wizard-option">
+        <input type="checkbox" ${wizCopies.has(c.code) ? 'checked' : ''} onchange="toggleCopy('${c.code}')">
+        <div><div class="lbl">${c.name}</div><div class="desc">${c.diverged} page(s) currently diverged · ${statusLabel[c.status]}</div></div>
+      </label>
+    `).join('');
+  } else if(wizStep === 1){
+    indicator.textContent = 'Step 2 of 3 — Changes';
+    body.innerHTML = `<h3>What should be rolled out from the blueprint?</h3>` + changedItems.map(item => `
+      <label class="wizard-option">
+        <input type="checkbox" ${wizItems.has(item) ? 'checked' : ''} onchange="toggleItem('${item}')">
+        <div><div class="lbl">${item}</div></div>
+      </label>
+    `).join('');
+  } else if(wizStep === 2){
+    indicator.textContent = 'Step 3 of 3 — Review';
+    const copyNames = [...wizCopies].map(code => liveCopies.find(c => c.code === code).name).join(', ') || '(none selected)';
+    const skipped = liveCopies.filter(c => !wizCopies.has(c.code)).map(c => c.name).join(', ');
+    body.innerHTML = `
+      <h3>Review before rolling out</h3>
+      <div class="wizard-summary-line"><span>Items</span><b>${wizItems.size}</b></div>
+      <div class="wizard-summary-line"><span>Live copies</span><b>${copyNames}</b></div>
+      <div class="parity-note">This will push ${wizItems.size} item(s) to ${wizCopies.size} live cop${wizCopies.size === 1 ? 'y' : 'ies'} (${copyNames}).${skipped ? ` ${skipped} ${liveCopies.filter(c => !wizCopies.has(c.code)).length === 1 ? 'is' : 'are'} already in sync and will be skipped.` : ''}</div>
+    `;
+  }
+}
+
+document.getElementById('wizNext').addEventListener('click', () => {
+  if(wizStep === 'done') return;
+  if(wizStep === 2){
+    wizCopies.forEach(code => {
+      const c = liveCopies.find(x => x.code === code);
+      if(c){
+        c.status = 'in-progress';
+        c.diverged = 0;
+        c.lastRollout = 'Just started';
+        setTimeout(() => { c.status = 'in-sync'; c.lastRollout = 'Just now'; renderCopyTable(); }, 4000);
+      }
+    });
+    wizStep = 'done';
+  } else {
+    wizStep++;
+  }
+  renderWizard();
+});
+document.getElementById('wizBack').addEventListener('click', () => {
+  if(typeof wizStep === 'number' && wizStep > 0){ wizStep--; renderWizard(); }
+});
+document.getElementById('modalClose').addEventListener('click', closeWizard);
+document.getElementById('modalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'modalBackdrop') closeWizard(); });
+document.getElementById('rolloutBtn').addEventListener('click', () => openWizard(null));
+
+renderCopyTable();
+</script>
+</body>
+</html>

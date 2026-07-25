@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document Authoring — Browse (Redesign Prototype)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="siteView">
+  <div class="appbar">
+    <div class="logomark">A</div>
+    <svg class="app-switcher" viewBox="0 0 24 24" fill="none"><path d="M4 5h4v4H4V5zm0 6h4v4H4v-4zm0 6h4v4H4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z" fill="currentColor"/></svg>
+    <div class="app-title">Document Authoring <small>Site Structure</small></div>
+    <div class="breadcrumb"><b>blofft1</b> / wknd-advanced</div>
+    <div class="appbar-spacer"></div>
+    <div class="appbar-icon">⌕</div>
+    <div class="appbar-icon">?</div>
+    <div class="appbar-icon" id="inboxBtn" title="Inbox">🔔</div>
+    <div class="avatar">B</div>
+  </div>
+
+  <div class="shell">
+    <div class="rail">
+      <a class="rail-item" href="index.html" title="Home">⌂</a>
+      <div class="rail-item active">▤</div>
+      <div class="rail-item">◱</div>
+      <div class="rail-item">💡</div>
+      <div class="rail-item rail-bottom">⚙</div>
+    </div>
+
+    <div class="main">
+      <div class="ews-modebar">
+        <div class="ews-seg" id="siteSeg">
+          <button class="active" data-mode="site">▤ Site</button>
+          <button data-mode="layout">▦ Layout</button>
+          <button data-mode="content">≣ Content</button>
+          <button data-mode="sbs" title="Side by side">◫</button>
+        </div>
+      </div>
+      <div class="action-menu">
+        <div class="action-group">
+          <span class="action-group-label">Content</span>
+          <a class="action-item" href="translation.html">🌐 Translation</a>
+          <a class="action-item" href="msm.html">🔗 MSM</a>
+          <a class="action-item" href="fragments.html">🧩 Fragments</a>
+          <a class="action-item" href="aemcoder.html">⬆ Import</a>
+        </div>
+        <div class="action-divider"></div>
+        <div class="action-group">
+          <span class="action-group-label">Governance</span>
+          <div class="action-item" data-app="scheduler">⏱ Scheduler</div>
+          <div class="action-item" data-app="permissions">🔒 Permissions</div>
+        </div>
+      </div>
+
+      <div class="ai-bar-wrap">
+        <div class="ai-bar">
+          <span class="ai-icon">✦</span>
+          <input id="aiInput" placeholder="Ask AI, search, or jump to a page or folder…">
+          <button class="send" id="aiSend">➤</button>
+        </div>
+        <div class="ai-suggestions">
+          <div class="ai-chip" data-q="What's in review right now?">What's in review right now?</div>
+          <div class="ai-chip" data-q="Who can edit articles?">Who can edit articles?</div>
+          <div class="ai-chip" data-q="Create a new page in articles">Create a new page in articles</div>
+        </div>
+        <div class="ai-response" id="aiResponse"></div>
+      </div>
+
+      <div class="toolbar">
+        <div class="chip-filter active" data-type="all">All</div>
+        <div class="chip-filter" data-type="page">Pages</div>
+        <div class="chip-filter" data-type="fragment">Fragments</div>
+        <div class="chip-filter" data-type="config">Config</div>
+        <div class="chip-filter" data-type="locale">Locales</div>
+        <div class="chip-filter" data-type="asset">Assets</div>
+        <div class="chip-filter" data-type="folder">Folders</div>
+        <div class="search-box">⌕ <input id="searchInput" placeholder="Filter by name or title…"></div>
+      </div>
+
+      <div class="table-card">
+        <div class="crumbs-row">
+          <span class="crumb-link" data-level="org">⌂ blofft1</span>
+          <span class="crumb-sep">›</span>
+          <span class="crumb-link active" data-level="site">wknd-advanced</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-check"><input type="checkbox" id="selectAll" title="Select all"></th>
+              <th data-key="name">Name<span class="sort-arrow" data-key="name"></span></th>
+              <th data-key="title">Title<span class="sort-arrow" data-key="title"></span></th>
+              <th data-key="type">Type<span class="sort-arrow" data-key="type"></span></th>
+              <th data-key="status">Status<span class="sort-arrow" data-key="status"></span></th>
+              <th data-key="modified">Modified<span class="sort-arrow" data-key="modified"></span></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  </div><!-- /siteView -->
+
+  <div class="selection-bar" id="selectionBar">
+    <div class="sel-left"><span class="sel-x" id="selClear" title="Clear selection">✕</span><span id="selCount">1 item selected</span></div>
+    <div class="sel-actions">
+      <button data-act="rename">🖊 Rename</button>
+      <button data-act="favorite">☆ Favorite</button>
+      <button data-act="copy">⧉ Copy</button>
+      <button data-act="cut">✂ Cut</button>
+      <button data-act="delete">🗑 Delete</button>
+      <button data-act="preview">◱ Preview</button>
+      <button data-act="publish">➤ Publish</button>
+      <button data-act="share">↗ Share</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="backdrop" id="backdrop"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="t">
+        <h2 id="dTitle">—</h2>
+        <p id="dPath">—</p>
+      </div>
+      <div class="drawer-close" id="drawerClose">✕</div>
+    </div>
+    <div class="drawer-body" id="dBody"></div>
+  </div>
+
+  <div class="anno-pin" id="pin1" style="top:86px; left:36px;">1</div>
+  <div class="anno-pin" id="pin2" style="top:150px; left:400px;">2</div>
+  <div class="anno-pin" id="pin3" style="top:296px; left:16px;">3</div>
+  <div class="anno-pin" id="pin4" style="top:340px; left:210px;">4</div>
+  <div class="anno-pin" id="pin5" style="top:340px; left:400px;">5</div>
+  <div class="anno-pin" id="pin6" style="top:340px; left:560px;">6</div>
+
+  <div class="anno-toggle" id="annoToggle"><span class="sw"></span> Show redesign notes</div>
+  <div class="anno-legend">
+    <h3>What changed vs. today's Browse view</h3>
+    <div class="row"><div class="num">1</div><div class="txt"><b>Action menu, grouped</b><span>Browse / Search / Snapshots tabs are gone. Translation and MSM are now real screens (try clicking them). Inbox moved into the existing notification bell rather than adding a 5th button.</span></div></div>
+    <div class="row"><div class="num">2</div><div class="txt"><b>Inline AI omnibar</b><span>Compact and contextual, not a separate destination. Also now the only way to create content — the old "+ Create" button is gone; that intent is AI-assisted.</span></div></div>
+    <div class="row"><div class="num">3</div><div class="txt"><b>Clickable breadcrumb</b><span>Moved directly above the table. Clicking a segment re-populates the table in place (org's site list vs. this site's content) — no page navigation.</span></div></div>
+    <div class="row"><div class="num">4</div><div class="txt"><b>Name vs. Title</b><span>Restores the AEM concept of a URL-safe Name separate from a human Title.</span></div></div>
+    <div class="row"><div class="num">5</div><div class="txt"><b>Type badge</b><span>Every row is labeled Page, Fragment, Config, Locale, or Asset instead of looking like an undifferentiated file list — and it's filterable via the chips above the table. Folder/file icons stay plain black and white; the Type column carries the signal.</span></div></div>
+    <div class="row"><div class="num">6</div><div class="txt"><b>Status</b><span>Published / In review / Draft is visible inline — this is what "Snapshots" means today, surfaced without a separate app.</span></div></div>
+  </div>
+
+  <div id="editorView" class="ews-hidden">
+    <div class="cv-topbar">
+      <div class="logomark">A</div>
+      <div class="cv-crumb"><a href="#" id="ewsHome">blofft1</a> › <a href="#" id="ewsSiteCrumb">wknd-advanced</a> › <b id="ewsCrumbPage">index</b></div>
+      <div class="appbar-spacer"></div>
+      <div class="cv-top-action" id="ewsFeedback">💬 Feedback</div>
+      <div class="cv-top-icon" title="Page source">📄</div>
+      <button class="cv-send" id="ewsPublish" title="Publish">➤</button>
+      <div class="avatar">B</div>
+    </div>
+    <div class="cv-shell">
+      <div class="rail">
+        <a class="rail-item" href="index.html" title="Home">⌂</a>
+        <div class="rail-item">◱</div>
+        <div class="rail-item">💡</div>
+      </div>
+
+      <div class="cv-ai">
+        <div class="cv-ai-center">
+          <h2>Welcome, Bill</h2>
+          <p>What are we working on today?</p>
+        </div>
+        <div class="cv-ai-foot">
+          <div class="cv-ai-box">
+            <input placeholder="Ask anything, or type / for skills…">
+            <button class="cv-ai-plus">+</button>
+          </div>
+          <p class="cv-ai-note">Responses are generated using AI, and may be inaccurate. Check before using. <a href="#">AI User Guidelines</a></p>
+        </div>
+      </div>
+
+      <div class="cv-canvas-col">
+        <div class="cv-canvas-toolbar">
+          <div class="cv-tb-left"><button title="Undo">↶</button><button title="Redo">↷</button></div>
+          <div class="cv-tb-center">
+            <div class="ews-seg" id="editorSeg">
+              <button data-mode="site">▤ Site</button>
+              <button class="active" data-mode="layout">Layout</button>
+              <button data-mode="content">Content</button>
+              <button data-mode="sbs" title="Side by side">◫</button>
+            </div>
+          </div>
+          <div class="cv-tb-right"></div>
+        </div>
+
+        <div class="cv-canvas-scroll">
+          <div class="ews-canvas" id="ewsCanvas" data-mode="layout">
+            <!-- Layout: rendered page -->
+            <div class="render-doc">
+              <div class="wknd-site">
+                <header class="wknd-nav">
+                  <div class="wknd-logo">WKND</div>
+                  <nav><span>START HERE ⌄</span><span>LEARN</span><span>TOOLS ⌄</span><span>PRODUCTS ⌄</span><span>ABOUT</span><span>EVENTS</span><span>EXTRAS</span></nav>
+                  <div class="wknd-search">Search</div>
+                </header>
+                <div class="wknd-hero" style="background-image:url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1400&q=60')">
+                  <div class="wknd-hero-inner">
+                    <div class="wknd-eyebrow">Explore · Wander · Belong</div>
+                    <h1>The <em>Art</em> of the<br>Perfect Getaway</h1>
+                  </div>
+                </div>
+                <div class="wknd-card">Dig into our library of trip guides and local tips to help you travel smarter. <a href="#">Explore our guides</a></div>
+                <section class="wknd-idea">
+                  <h2>The Idea</h2>
+                  <p>The heart of <b>WKND</b> is a simple belief: the best weekends aren't bought, they're <i>lived</i>. Whether it's a coastline you've never seen, a trail that tests your legs, or a town square where you don't speak the language — great travel is about building experiences that stay with you.</p>
+                  <p>WKND grew out of a love for spontaneous escapes and slow, intentional journeys alike. From weekend road trips to once-in-a-lifetime expeditions, we curate the stories, routes, and gear that turn <i>someday</i> into <i>this</i> weekend.</p>
+                </section>
+              </div>
+            </div>
+            <!-- Content: block structure -->
+            <div class="blocks-doc">
+              <div class="blk">
+                <div class="blk-head">hero</div>
+                <div class="blk-body">
+                  <div class="blk-img" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=1000&q=60')"></div>
+                  <div class="blk-img" style="background-image:url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1000&q=60')"></div>
+                  <div class="blk-text">Explore · Wander · Belong</div>
+                  <div class="blk-h">The <em>Art</em> of the Perfect Getaway</div>
+                </div>
+              </div>
+              <div class="blk">
+                <div class="blk-head">section-metadata</div>
+                <table class="blk-meta"><tr><td>mbox</td><td>homepage-hero-mbox</td></tr></table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-files">
+        <div class="cv-rail-head">
+          <button class="rail-select" id="railSelect"><span>▭</span><span id="railSelLabel">Files</span><span class="ca">⌄</span></button>
+          <div class="rail-menu ews-hidden" id="railMenu">
+            <div class="rail-menu-item" data-panel="editor">Editor</div>
+            <div class="rail-menu-item" data-panel="outline">Outline</div>
+            <div class="rail-menu-item" data-panel="files">Files</div>
+            <div class="rail-menu-item" data-panel="versions">Versions</div>
+            <div class="rail-menu-item" data-panel="properties">Properties</div>
+          </div>
+        </div>
+
+        <!-- Files -->
+        <div class="rail-panel" data-panel="files">
+          <div class="cv-tree">
+            <div class="cv-tree-root">⌄ wknd-advanced</div>
+            <div id="ewsTree"></div>
+          </div>
+        </div>
+
+        <!-- Outline -->
+        <div class="rail-panel ews-hidden" data-panel="outline">
+          <div class="outline-list" id="outlineList"></div>
+          <button class="outline-add" id="outlineAdd">+ Add section</button>
+        </div>
+
+        <!-- Versions -->
+        <div class="rail-panel ews-hidden" data-panel="versions">
+          <div class="ver-tabs">
+            <button class="active" data-v="all">All</button>
+            <button data-v="me">Only me</button>
+            <span class="ver-add" title="Add version">＋</span>
+          </div>
+          <div class="ver-hint">Press ⌘ + ⌥ + S to add to version history while editing.</div>
+          <div class="ver-timeline">
+            <div class="ver-item current"><span class="ver-dot"></span><div class="ver-meta"><b>Current</b></div></div>
+            <div class="ver-group">⌄ 2 changes</div>
+            <div class="ver-item"><span class="ver-dot"></span><div class="ver-meta"><b>Published</b><span>Jul 22, 2026, 10:43 AM</span><span>BLOFFT@ADOBE.COM</span></div></div>
+            <div class="ver-item"><span class="ver-dot"></span><div class="ver-meta"><b>Published</b><span>Jul 22, 2026, 10:40 AM</span><span>BLOFFT@ADOBE.COM</span></div></div>
+            <div class="ver-item"><span class="ver-dot"></span><div class="ver-meta"><b>Published</b><span>Jul 22, 2026, 10:33 AM</span><span>BLOFFT@ADOBE.COM</span></div></div>
+            <div class="ver-item"><span class="ver-dot"></span><div class="ver-meta"><b>Previewed</b><span>Jul 22, 2026, 10:33 AM</span><span>BLOFFT@ADOBE.COM</span></div></div>
+            <div class="ver-group">⌄ 1 change</div>
+            <div class="ver-item"><span class="ver-dot"></span><div class="ver-meta"><b>Published</b><span>Jul 22, 2026, 10:29 AM</span><span>BLOFFT@ADOBE.COM</span></div></div>
+            <div class="ver-group">⌄ 1 change</div>
+            <div class="ver-item"><span class="ver-dot"></span><div class="ver-meta"><b>Published</b><span>Jul 21, 2026, 11:00 AM</span><span>BLOFFT@ADOBE.COM</span></div></div>
+          </div>
+        </div>
+
+        <!-- Properties -->
+        <div class="rail-panel ews-hidden" data-panel="properties">
+          <div id="propsBody"></div>
+        </div>
+
+        <!-- Editor (library) -->
+        <div class="rail-panel ews-hidden" data-panel="editor">
+          <div class="lib-hint">Drag a block onto the canvas to insert it.</div>
+          <div class="lib-item">▤ Text</div>
+          <div class="lib-item">▦ Hero</div>
+          <div class="lib-item">⊞ Cards</div>
+          <div class="lib-item">◫ Columns</div>
+          <div class="lib-item">🖼 Image</div>
+          <div class="lib-item">❝ Quote</div>
+          <div class="lib-item">🧩 Fragment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// kind: 'container' (folder-shaped icon) | 'item' (file-shaped icon)
+// category: 'page' | 'fragment' | 'config' | 'locale' | 'asset' | null (null = no confident category — stays neutral)
+const rows = [
+  {name:'about-us', title:'About Us', kind:'item', category:'page', status:'published', modified:'Jul 20, 2026', by:'K. Robin', template:'Article Page', lang:'English', preview:'main--wknd-advanced--blofft1.aem.page/about-us', live:'main--wknd-advanced--blofft1.aem.live/about-us', perms:'Read: org · Write: da-authors'},
+  {name:'already-investing', title:'Already Investing', kind:'item', category:'page', status:'published', modified:'Jul 20, 2026', by:'K. Robin', template:'Article Page', lang:'English', preview:'.../already-investing', live:'.../already-investing', perms:'Read: org · Write: da-authors'},
+  {name:'articles', title:'Articles', kind:'container', category:'page', status:null, modified:'—', by:'—', childCount:12},
+  {name:'articles', title:'Articles Index', kind:'item', category:'page', status:'published', modified:'Jul 20, 2026', by:'K. Robin', template:'List Page', lang:'English', preview:'.../articles', live:'.../articles', perms:'Read: org · Write: da-authors'},
+  {name:'de', title:'German (de)', kind:'container', category:'locale', status:null, modified:'—', by:'—', childCount:9},
+  {name:'demo-docs', title:'Demo Docs', kind:'container', category:null, status:null, modified:'—', by:'—', childCount:4},
+  {name:'en', title:'English (en)', kind:'container', category:'locale', status:null, modified:'—', by:'—', childCount:9},
+  {name:'es', title:'Spanish (es)', kind:'container', category:'locale', status:null, modified:'—', by:'—', childCount:9},
+  {name:'events', title:'Events', kind:'item', category:'page', status:'published', modified:'Jul 20, 2026', by:'K. Robin', template:'List Page', lang:'English', preview:'.../events', live:'.../events', perms:'Read: org · Write: da-authors'},
+  {name:'extras', title:'Trips Worth Taking — Extras', kind:'item', category:'page', status:'review', modified:'Jul 20, 2026', by:'B. Loeffler', template:'Article Page', lang:'English', preview:'.../extras', live:'—', perms:'Read: org · Write: da-authors', reviewNote:'Part of Snapshot "Black-Friday-2026" — locked for review, awaiting Approve & Publish.'},
+  {name:'faqs', title:'FAQs', kind:'container', category:'page', status:null, modified:'—', by:'—', childCount:6},
+  {name:'config', title:'Site Configuration', kind:'container', category:'config', status:null, modified:'—', by:'—', childCount:3},
+  {name:'footer', title:'Global Footer', kind:'item', category:'config', status:'published', modified:'Jun 2, 2026', by:'K. Robin', template:'Fragment (system)', lang:'—', perms:'Read: org · Write: da-admins'},
+  {name:'fragments', title:'Reusable Fragments', kind:'container', category:'fragment', status:null, modified:'—', by:'—', childCount:5},
+  {name:'related-articles', title:'Related Articles (Bento)', kind:'item', category:'fragment', status:'published', modified:'Jul 20, 2026', by:'K. Robin', template:'Fragment', lang:'English', preview:'.../fragments/related-articles', live:'.../fragments/related-articles', perms:'Read: org · Write: da-authors'},
+  {name:'icons', title:'Icon Assets', kind:'container', category:'asset', status:null, modified:'—', by:'—', childCount:14},
+  {name:'search.svg', title:'Search Icon', kind:'item', category:'asset', status:'published', modified:'Jul 20, 2026', by:'AI Assistant', template:'SVG Asset', lang:'—', preview:'.../icons/search.svg', live:'.../icons/search.svg', perms:'Read: org · Write: da-authors'},
+  {name:'nav', title:'Global Navigation', kind:'item', category:'config', status:'published', modified:'Jun 2, 2026', by:'K. Robin', template:'Fragment (system)', lang:'—', perms:'Read: org · Write: da-admins'},
+];
+
+// Sample contents for each folder, keyed by folder path (relative to the site root).
+function localePages(lang){
+  return [
+    {name:'about-us', title:'About Us', kind:'item', category:'page', status:'published', modified:'Jul 19, 2026', by:'K. Robin', template:'Article Page', lang},
+    {name:'already-investing', title:'Already Investing', kind:'item', category:'page', status:'published', modified:'Jul 19, 2026', by:'K. Robin', template:'Article Page', lang},
+    {name:'articles', title:'Articles', kind:'container', category:'page', childCount:6},
+    {name:'events', title:'Events', kind:'item', category:'page', status:'published', modified:'Jul 18, 2026', by:'K. Robin', template:'List Page', lang},
+    {name:'index', title:'Home', kind:'item', category:'page', status:'published', modified:'Jul 19, 2026', by:'K. Robin', template:'Home Page', lang},
+  ];
+}
+const folderData = {
+  'articles': [
+    {name:'trips-worth-taking', title:'Trips Worth Taking', kind:'item', category:'page', status:'published', modified:'Jul 20, 2026', by:'K. Robin', template:'Article Page', lang:'English', preview:'.../articles/trips-worth-taking', live:'.../articles/trips-worth-taking', perms:'Read: org · Write: da-authors'},
+    {name:'weekend-escapes', title:'Weekend Escapes', kind:'item', category:'page', status:'published', modified:'Jul 19, 2026', by:'K. Robin', template:'Article Page', lang:'English', perms:'Read: org · Write: da-authors'},
+    {name:'gear-guide', title:'Ultimate Gear Guide', kind:'item', category:'page', status:'draft', modified:'Jul 18, 2026', by:'B. Loeffler', template:'Article Page', lang:'English', perms:'Read: org · Write: da-authors'},
+    {name:'first-timers', title:'For First-Timers', kind:'item', category:'page', status:'review', modified:'Jul 17, 2026', by:'B. Loeffler', template:'Article Page', lang:'English', perms:'Read: org · Write: da-authors'},
+    {name:'2026', title:'2026 Archive', kind:'container', category:'page', childCount:3},
+  ],
+  'articles/2026': [
+    {name:'q1-recap', title:'Q1 Travel Recap', kind:'item', category:'page', status:'published', modified:'Apr 2, 2026', by:'K. Robin', template:'Article Page', lang:'English'},
+    {name:'summer-guide', title:'Summer Guide 2026', kind:'item', category:'page', status:'published', modified:'Jun 1, 2026', by:'K. Robin', template:'Article Page', lang:'English'},
+    {name:'fall-preview', title:'Fall Preview', kind:'item', category:'page', status:'draft', modified:'Jul 5, 2026', by:'B. Loeffler', template:'Article Page', lang:'English'},
+  ],
+  'de': localePages('German'),
+  'en': localePages('English'),
+  'es': localePages('Spanish'),
+  'demo-docs': [
+    {name:'onboarding', title:'Team Onboarding', kind:'item', category:null, status:'draft', modified:'Jul 10, 2026', by:'B. Loeffler'},
+    {name:'style-guide', title:'Brand Style Guide', kind:'item', category:null, status:'draft', modified:'Jul 8, 2026', by:'B. Loeffler'},
+    {name:'component-demo', title:'Component Demo', kind:'item', category:null, status:'draft', modified:'Jul 2, 2026', by:'AI Assistant'},
+  ],
+  'events': [
+    {name:'summer-festival', title:'Summer Festival', kind:'item', category:'page', status:'published', modified:'Jul 15, 2026', by:'K. Robin', template:'Event Page', lang:'English'},
+    {name:'trail-day', title:'Community Trail Day', kind:'item', category:'page', status:'published', modified:'Jul 12, 2026', by:'K. Robin', template:'Event Page', lang:'English'},
+    {name:'gear-swap', title:'Annual Gear Swap', kind:'item', category:'page', status:'draft', modified:'Jul 9, 2026', by:'B. Loeffler', template:'Event Page', lang:'English'},
+  ],
+  'faqs': [
+    {name:'booking', title:'Booking & Payments', kind:'item', category:'page', status:'published', modified:'Jun 20, 2026', by:'K. Robin', template:'FAQ Page', lang:'English'},
+    {name:'cancellations', title:'Cancellations', kind:'item', category:'page', status:'published', modified:'Jun 20, 2026', by:'K. Robin', template:'FAQ Page', lang:'English'},
+    {name:'gear-rental', title:'Gear Rental', kind:'item', category:'page', status:'published', modified:'Jun 18, 2026', by:'K. Robin', template:'FAQ Page', lang:'English'},
+  ],
+  'config': [
+    {name:'nav', title:'Global Navigation', kind:'item', category:'config', status:'published', modified:'Jun 2, 2026', by:'K. Robin', template:'Fragment (system)', lang:'—', perms:'Read: org · Write: da-admins'},
+    {name:'footer', title:'Global Footer', kind:'item', category:'config', status:'published', modified:'Jun 2, 2026', by:'K. Robin', template:'Fragment (system)', lang:'—', perms:'Read: org · Write: da-admins'},
+    {name:'site-config', title:'Site Settings', kind:'item', category:'config', status:'published', modified:'May 30, 2026', by:'K. Robin', template:'Config', lang:'—', perms:'Read: org · Write: da-admins'},
+  ],
+  'fragments': [
+    {name:'related-articles', title:'Related Articles (Bento)', kind:'item', category:'fragment', status:'published', modified:'Jul 20, 2026', by:'K. Robin', template:'Fragment', lang:'English', perms:'Read: org · Write: da-authors'},
+    {name:'hero-banner', title:'Hero Banner', kind:'item', category:'fragment', status:'published', modified:'Jul 14, 2026', by:'K. Robin', template:'Fragment', lang:'English', perms:'Read: org · Write: da-authors'},
+    {name:'cta-newsletter', title:'Newsletter CTA', kind:'item', category:'fragment', status:'published', modified:'Jul 10, 2026', by:'K. Robin', template:'Fragment', lang:'English', perms:'Read: org · Write: da-authors'},
+    {name:'author-bio', title:'Author Bio', kind:'item', category:'fragment', status:'draft', modified:'Jul 4, 2026', by:'B. Loeffler', template:'Fragment', lang:'English', perms:'Read: org · Write: da-authors'},
+  ],
+  'icons': [
+    {name:'search.svg', title:'Search Icon', kind:'item', category:'asset', status:'published', modified:'Jul 20, 2026', by:'AI Assistant', template:'SVG Asset', lang:'—'},
+    {name:'menu.svg', title:'Menu Icon', kind:'item', category:'asset', status:'published', modified:'Jul 20, 2026', by:'AI Assistant', template:'SVG Asset', lang:'—'},
+    {name:'arrow.svg', title:'Arrow Icon', kind:'item', category:'asset', status:'published', modified:'Jul 20, 2026', by:'AI Assistant', template:'SVG Asset', lang:'—'},
+    {name:'pin.svg', title:'Location Pin', kind:'item', category:'asset', status:'published', modified:'Jul 19, 2026', by:'AI Assistant', template:'SVG Asset', lang:'—'},
+    {name:'star.svg', title:'Star Icon', kind:'item', category:'asset', status:'published', modified:'Jul 19, 2026', by:'AI Assistant', template:'SVG Asset', lang:'—'},
+  ],
+};
+
+const containerLabel = {page:'Pages', fragment:'Fragments', asset:'Assets', locale:'Locale', config:'Config'};
+const itemLabel = {page:'Page', fragment:'Fragment', asset:'Asset', locale:'Locale', config:'Config'};
+
+function getIconSvg(r){
+  const shape = r.kind === 'container'
+    ? '<path d="M2 5a1 1 0 011-1h4l2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V5z" fill="currentColor"/>'
+    : '<path d="M5 2h6l4 4v12H5V2z" stroke="currentColor" stroke-width="1.3" fill="none"/>';
+  return `<svg class="ic" viewBox="0 0 20 20" fill="none">${shape}</svg>`;
+}
+
+function getBadge(r){
+  if(!r.category) return '<span class="muted">—</span>';
+  const label = r.kind === 'container' ? containerLabel[r.category] : itemLabel[r.category];
+  return `<span class="badge b-${r.category}">${label}</span>`;
+}
+
+function sortTypeLabel(r){
+  if(!r.category) return 'Folder';
+  return r.kind === 'container' ? containerLabel[r.category] : itemLabel[r.category];
+}
+
+const tbody = document.getElementById('tbody');
+
+const sortState = { key: null, dir: 'asc' };
+
+function compareRows(a, b, key){
+  let av, bv;
+  switch(key){
+    case 'name': av = a.name.toLowerCase(); bv = b.name.toLowerCase(); break;
+    case 'title': av = a.title.toLowerCase(); bv = b.title.toLowerCase(); break;
+    case 'type': av = sortTypeLabel(a).toLowerCase(); bv = sortTypeLabel(b).toLowerCase(); break;
+    case 'status': { const rank = {review:0, draft:1, published:2}; av = rank[a.status] ?? 3; bv = rank[b.status] ?? 3; break; }
+    case 'modified': { const pa = Date.parse(a.modified); const pb = Date.parse(b.modified); av = isNaN(pa) ? -Infinity : pa; bv = isNaN(pb) ? -Infinity : pb; break; }
+    default: av = bv = 0;
+  }
+  if(av < bv) return -1;
+  if(av > bv) return 1;
+  return 0;
+}
+
+function updateSortArrows(){
+  document.querySelectorAll('.sort-arrow').forEach(s => {
+    s.textContent = s.dataset.key === sortState.key ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : '';
+  });
+}
+
+document.querySelectorAll('th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if(sortState.key === key){ sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc'; }
+    else { sortState.key = key; sortState.dir = 'asc'; }
+    updateSortArrows();
+    const activeFilter = document.querySelector('.chip-filter.active').dataset.type;
+    render(activeFilter, document.getElementById('searchInput').value.toLowerCase());
+  });
+});
+
+let currentList = [];
+let folderPath = [];
+const selection = new Set();
+
+function currentFolderRows(){
+  return folderPath.length === 0 ? rows : (folderData[folderPath.join('/')] || []);
+}
+
+function render(filter, search){
+  tbody.innerHTML = '';
+  let list = currentFolderRows().filter(r => {
+        if(filter === 'all') return true;
+        if(filter === 'folder') return !r.category; // uncategorized, generic containers only
+        return r.category === filter;
+      })
+      .filter(r => !search || r.name.toLowerCase().includes(search) || r.title.toLowerCase().includes(search));
+  if(sortState.key){
+    list = list.slice().sort((a, b) => compareRows(a, b, sortState.key) * (sortState.dir === 'asc' ? 1 : -1));
+  }
+  currentList = list;
+  if(list.length === 0){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td></td><td colspan="6" class="muted" style="padding:24px 14px;">This folder is empty.</td>`;
+    tbody.appendChild(tr);
+    updateSelectAll();
+    return;
+  }
+  list.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    if(selection.has(r)) tr.classList.add('row-selected');
+    tr.innerHTML = `
+      <td class="col-check"><input type="checkbox" class="row-check" ${selection.has(r) ? 'checked' : ''}></td>
+      <td><div class="name-cell">${getIconSvg(r)}${r.name}</div></td>
+      <td class="title-cell">${r.title}</td>
+      <td>${getBadge(r)}</td>
+      <td>${r.status ? `<span class="status ${r.status}"><span class="dot"></span>${r.status==='published'?'Published':r.status==='review'?'In review':'Draft'}</span>` : '<span class="muted">—</span>'}</td>
+      <td class="modified">${r.modified}${r.by && r.by!=='—' ? ' · '+r.by : ''}</td>
+      <td class="more-btn" title="Details">⋯</td>
+    `;
+    const check = tr.querySelector('.row-check');
+    check.addEventListener('click', e => e.stopPropagation());
+    check.addEventListener('change', () => { toggleSelect(r, check.checked); tr.classList.toggle('row-selected', check.checked); });
+    const more = tr.querySelector('.more-btn');
+    more.addEventListener('click', e => { e.stopPropagation(); openMetaPopover(r, more); });
+    tr.addEventListener('click', () => { if(r.kind === 'item') openCanvas(r); else goToFolder([...folderPath, r.name]); });
+    tbody.appendChild(tr);
+  });
+  updateSelectAll();
+}
+
+document.querySelectorAll('.chip-filter').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip-filter').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    render(chip.dataset.type, document.getElementById('searchInput').value.toLowerCase());
+  });
+});
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const active = document.querySelector('.chip-filter.active').dataset.type;
+  render(active, e.target.value.toLowerCase());
+});
+
+const drawer = document.getElementById('drawer');
+const backdrop = document.getElementById('backdrop');
+
+function openDrawer(r){
+  document.getElementById('dTitle').textContent = r.title;
+  document.getElementById('dPath').textContent = '/wknd-advanced/' + r.name;
+  let body = `
+    <div class="prop-row"><div class="k">Name</div><div class="v">${r.name}</div></div>
+    <div class="prop-row"><div class="k">Type</div><div class="v">${sortTypeLabel(r)}${r.kind==='container' ? ' (folder)' : ''}</div></div>
+  `;
+  if(r.status){
+    body += `<div class="prop-row"><div class="k">Status</div><div class="v">${r.status==='published'?'Published':r.status==='review'?'In review':'Draft'}</div></div>`;
+  }
+  if(r.template) body += `<div class="prop-row"><div class="k">Template</div><div class="v">${r.template}</div></div>`;
+  if(r.lang) body += `<div class="prop-row"><div class="k">Language</div><div class="v">${r.lang}</div></div>`;
+  if(r.modified && r.modified!=='—') body += `<div class="prop-row"><div class="k">Modified</div><div class="v">${r.modified}</div></div>`;
+  if(r.by && r.by!=='—') body += `<div class="prop-row"><div class="k">Modified by</div><div class="v">${r.by}</div></div>`;
+  if(r.childCount) body += `<div class="prop-row"><div class="k">Contains</div><div class="v">${r.childCount} items</div></div>`;
+  if(r.perms) body += `<div class="prop-row"><div class="k">Permissions</div><div class="v">${r.perms}</div></div>`;
+  if(r.preview) body += `<div class="prop-row"><div class="k">Preview</div><div class="v" style="font-weight:400;color:var(--blue-700);">${r.preview}</div></div>`;
+  if(r.live && r.live!=='—') body += `<div class="prop-row"><div class="k">Live</div><div class="v" style="font-weight:400;color:var(--blue-700);">${r.live}</div></div>`;
+
+  if(r.reviewNote){
+    body += `<div class="review-note">🔒 ${r.reviewNote}</div>`;
+  }
+
+  body += `<div class="drawer-actions">
+    <button class="btn primary">Edit content</button>
+    <button class="btn">View live</button>
+    <button class="btn">Version history</button>
+  </div>`;
+
+  document.getElementById('dBody').innerHTML = body;
+  drawer.classList.add('open');
+  backdrop.classList.add('open');
+}
+document.getElementById('drawerClose').addEventListener('click', () => { drawer.classList.remove('open'); backdrop.classList.remove('open'); });
+backdrop.addEventListener('click', () => { drawer.classList.remove('open'); backdrop.classList.remove('open'); });
+
+// ---------- Action menu (quick-panel apps: Import, Scheduler, Permissions, Inbox) ----------
+const apps = {
+  inbox: {label:'Inbox', desc:'A unified queue of tasks assigned to you or your team — pending reviews, approvals, and workflow steps waiting on action.', parity:'The AEM Inbox / Workflow console.'},
+  scheduler: {label:'Scheduler', desc:'Schedule content — and Snapshots — to publish automatically at a future date and time, without anyone needing to be online to click Publish.', parity:'Launches with scheduled activation.'},
+  import: {label:'Import', desc:'Bring content in from an existing site, spreadsheet, or URL list and convert it into DA-ready pages.', parity:'Content migration / bulk import tooling.'},
+  permissions: {label:'Permissions', desc:'Manage who can read or write content, by group or email, down to the folder level.', parity:'The Permissions console (ACLs on the JCR tree).'},
+};
+
+function openAppPanel(key){
+  const app = apps[key];
+  document.getElementById('dTitle').textContent = app.label;
+  document.getElementById('dPath').textContent = 'Experience Workspace App';
+  document.getElementById('dBody').innerHTML = `
+    <div style="font-size:13px; line-height:1.6; color:var(--gray-800);">${app.desc}</div>
+    <div class="parity-note"><b>Classic AEM equivalent:</b> ${app.parity}</div>
+    <div class="drawer-actions"><button class="btn primary">Open ${app.label}</button></div>
+  `;
+  drawer.classList.add('open');
+  backdrop.classList.add('open');
+}
+document.querySelectorAll('.action-item[data-app]').forEach(item => {
+  item.addEventListener('click', () => openAppPanel(item.dataset.app));
+});
+document.getElementById('inboxBtn').addEventListener('click', () => openAppPanel('inbox'));
+
+// ---------- Breadcrumb: click re-populates the table in place, no page change ----------
+const orgSites = [
+  {name:'wknd-advanced', title:'WKND Advanced', status:'published', modified:'Jul 20, 2026', current:true},
+  {name:'wknd-universal', title:'WKND Universal', status:'published', modified:'Jul 18, 2026'},
+  {name:'minto', title:'Minto', status:'published', modified:'Jun 30, 2026'},
+  {name:'wehealthcareeds', title:'weHealthcare EDS', status:'draft', modified:'Jun 12, 2026'},
+  {name:'refdemoeds', title:'RefDemoEDS', status:'published', modified:'May 2, 2026'},
+  {name:'qnity', title:'Qnity', status:'published', modified:'Apr 28, 2026'},
+  {name:'nike', title:'Nike', status:'draft', modified:'Apr 2, 2026'},
+  {name:'test-site', title:'Test Site', status:'draft', modified:'Mar 14, 2026'},
+];
+
+function renderOrgView(){
+  tbody.innerHTML = '';
+  currentList = orgSites;
+  orgSites.forEach(s => {
+    const color = s.current ? 'var(--blue-700)' : 'var(--gray-400)';
+    const tr = document.createElement('tr');
+    if(selection.has(s)) tr.classList.add('row-selected');
+    tr.innerHTML = `
+      <td class="col-check"><input type="checkbox" class="row-check" ${selection.has(s) ? 'checked' : ''}></td>
+      <td><div class="name-cell"><svg class="ic" viewBox="0 0 20 20" fill="none" style="color:${color}"><path d="M2 5a1 1 0 011-1h4l2 2h8a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V5z" fill="currentColor"/></svg>${s.name}</div></td>
+      <td class="title-cell">${s.title}</td>
+      <td><span class="badge" style="background:var(--gray-200); color:var(--gray-700);">Site</span></td>
+      <td><span class="status ${s.status}"><span class="dot"></span>${s.status==='published' ? 'Published' : 'Draft'}</span></td>
+      <td class="modified">${s.modified}</td>
+      <td class="more-btn">⋯</td>
+    `;
+    const check = tr.querySelector('.row-check');
+    check.addEventListener('click', e => e.stopPropagation());
+    check.addEventListener('change', () => { toggleSelect(s, check.checked); tr.classList.toggle('row-selected', check.checked); });
+    tr.addEventListener('click', () => {
+      if(s.current){
+        setView('site');
+        return;
+      }
+      document.getElementById('dTitle').textContent = s.title;
+      document.getElementById('dPath').textContent = '/' + s.name;
+      document.getElementById('dBody').innerHTML = `
+        <div class="prop-row"><div class="k">Name</div><div class="v">${s.name}</div></div>
+        <div class="prop-row"><div class="k">Status</div><div class="v">${s.status==='published' ? 'Published' : 'Draft'}</div></div>
+        <div class="prop-row"><div class="k">Modified</div><div class="v">${s.modified}</div></div>
+        <div class="parity-note">This mockup only has sample content wired up for wknd-advanced.</div>
+      `;
+      drawer.classList.add('open');
+      backdrop.classList.add('open');
+    });
+    tbody.appendChild(tr);
+  });
+  updateSelectAll();
+}
+
+let currentView = 'site';
+
+function renderCrumbs(){
+  const row = document.querySelector('.crumbs-row');
+  const inOrg = currentView === 'org';
+  let html = `<span class="crumb-link ${inOrg ? 'active' : ''}" data-nav="org">⌂ blofft1</span>`;
+  if(!inOrg){
+    html += `<span class="crumb-sep">›</span><span class="crumb-link ${folderPath.length === 0 ? 'active' : ''}" data-nav="site">wknd-advanced</span>`;
+    folderPath.forEach((f, i) => {
+      html += `<span class="crumb-sep">›</span><span class="crumb-link ${i === folderPath.length - 1 ? 'active' : ''}" data-nav="folder" data-idx="${i}">${f}</span>`;
+    });
+  }
+  row.innerHTML = html;
+  row.querySelectorAll('.crumb-link').forEach(c => {
+    c.addEventListener('click', () => {
+      const nav = c.dataset.nav;
+      if(nav === 'org') setView('org');
+      else if(nav === 'site') goToFolder([]);
+      else goToFolder(folderPath.slice(0, parseInt(c.dataset.idx) + 1));
+    });
+  });
+}
+
+function goToFolder(pathArr){
+  currentView = 'site';
+  folderPath = pathArr;
+  selection.clear();
+  updateSelectionBar();
+  document.querySelector('.toolbar').style.display = 'flex';
+  renderCrumbs();
+  render(document.querySelector('.chip-filter.active').dataset.type, document.getElementById('searchInput').value.toLowerCase());
+  document.querySelector('.main').scrollTop = 0;
+}
+
+function setView(level){
+  if(level === 'site'){ goToFolder([]); return; }
+  currentView = 'org';
+  folderPath = [];
+  selection.clear();
+  updateSelectionBar();
+  document.querySelector('.toolbar').style.display = 'none';
+  renderCrumbs();
+  renderOrgView();
+}
+
+const annoToggle = document.getElementById('annoToggle');
+annoToggle.addEventListener('click', () => {
+  annoToggle.classList.toggle('on');
+  document.body.classList.toggle('anno-on');
+});
+
+// ---------- AI omnibar ----------
+const aiInput = document.getElementById('aiInput');
+const aiResponse = document.getElementById('aiResponse');
+
+function findRowMatch(q){
+  const needle = q.trim().toLowerCase();
+  if(!needle) return null;
+  return rows.find(r => r.name.toLowerCase() === needle || r.title.toLowerCase() === needle)
+      || rows.find(r => r.name.toLowerCase().includes(needle) || r.title.toLowerCase().includes(needle));
+}
+
+function runAiQuery(q){
+  if(!q.trim()) return;
+  const match = findRowMatch(q);
+  const isQuestionLike = /^(who|what|create|show|find|can|is|are|does)\b/i.test(q.trim()) || q.trim().split(' ').length > 4;
+
+  if(match && !isQuestionLike){
+    document.querySelectorAll('.chip-filter').forEach(c => c.classList.remove('active'));
+    document.querySelector('.chip-filter[data-type="all"]').classList.add('active');
+    document.getElementById('searchInput').value = '';
+    render('all', '');
+    aiResponse.classList.remove('show');
+    openDrawer(match);
+    return;
+  }
+
+  const lower = q.toLowerCase();
+  let html = '';
+  if(/review|snapshot|approve/.test(lower)){
+    const r = rows.find(x => x.status === 'review');
+    html = `<div class="lbl">AI Assistant</div>1 item is currently in review: <b>${r.title}</b> (${r.name}), part of Snapshot "Black-Friday-2026." It's locked pending Approve &amp; Publish.<br><span class="link-btn" id="aiGoReview">Open ${r.name}</span>`;
+  } else if(/who can|permission|access/.test(lower)){
+    html = `<div class="lbl">AI Assistant</div>Most content in wknd-advanced is writable by the <b>da-authors</b> group; <b>footer</b> and <b>nav</b> are restricted to <b>da-admins</b>. Everyone in the org has read access.`;
+  } else if(/create/.test(lower)){
+    html = `<div class="lbl">AI Assistant</div>I can create that for you. What should the page be called, and should it use the <b>Article Page</b> template like the rest of /articles?`;
+  } else {
+    html = `<div class="lbl">AI Assistant</div>wknd-advanced has 9 pages, 2 fragments, and 1 item in review. Last published 2 hours ago. Ask me about a specific page, or type a name to jump straight to it.`;
+  }
+  aiResponse.innerHTML = html;
+  aiResponse.classList.add('show');
+  const goBtn = document.getElementById('aiGoReview');
+  if(goBtn){
+    goBtn.addEventListener('click', () => openDrawer(rows.find(x => x.status === 'review')));
+  }
+}
+
+document.getElementById('aiSend').addEventListener('click', () => runAiQuery(aiInput.value));
+aiInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') runAiQuery(aiInput.value); });
+document.querySelectorAll('.ai-chip').forEach(chip => {
+  chip.addEventListener('click', () => { aiInput.value = chip.dataset.q; runAiQuery(chip.dataset.q); });
+});
+
+// ---------- Multi-select + action bar (DA parity) ----------
+function rerender(){
+  if(currentView === 'org') renderOrgView();
+  else render(document.querySelector('.chip-filter.active').dataset.type, document.getElementById('searchInput').value.toLowerCase());
+}
+function toggleSelect(item, on){
+  if(on) selection.add(item); else selection.delete(item);
+  updateSelectionBar();
+  updateSelectAll();
+}
+function updateSelectAll(){
+  const sa = document.getElementById('selectAll');
+  if(!sa) return;
+  const sel = currentList.filter(r => selection.has(r)).length;
+  sa.checked = currentList.length > 0 && sel === currentList.length;
+  sa.indeterminate = sel > 0 && sel < currentList.length;
+}
+function updateSelectionBar(){
+  const bar = document.getElementById('selectionBar');
+  const n = selection.size;
+  if(n > 0){
+    bar.classList.add('open');
+    document.getElementById('selCount').textContent = `${n} item${n > 1 ? 's' : ''} selected`;
+  } else {
+    bar.classList.remove('open');
+  }
+}
+document.getElementById('selectAll').addEventListener('change', (e) => {
+  if(e.target.checked) currentList.forEach(r => selection.add(r));
+  else currentList.forEach(r => selection.delete(r));
+  updateSelectionBar();
+  rerender();
+});
+document.getElementById('selClear').addEventListener('click', () => { selection.clear(); updateSelectionBar(); rerender(); });
+
+const actionVerb = {rename:'Rename', favorite:'Favorited', copy:'Copied', cut:'Cut', delete:'Deleted', preview:'Preview', publish:'Published', share:'Shared'};
+document.querySelectorAll('.selection-bar button[data-act]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const act = btn.dataset.act;
+    const names = [...selection].map(r => r.name).join(', ');
+    showToast(`${actionVerb[act]}: ${names}`);
+    if(act === 'delete' || act === 'publish'){ selection.clear(); updateSelectionBar(); rerender(); }
+  });
+});
+
+// ---------- Toast ----------
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ---------- Ellipsis (⋯) → metadata popover ----------
+function openMetaPopover(r, anchor){
+  closeMetaPopover();
+  const pop = document.createElement('div');
+  pop.className = 'meta-popover';
+  pop.id = 'metaPop';
+  let rowsHtml = '';
+  const add = (k, v) => { if(v && v !== '—') rowsHtml += `<div class="mp-row"><span class="mp-k">${k}</span><span class="mp-v">${v}</span></div>`; };
+  add('Name', r.name);
+  add('Title', r.title);
+  add('Type', sortTypeLabel(r) + (r.kind === 'container' ? ' (folder)' : ''));
+  if(r.status) add('Status', r.status === 'published' ? 'Published' : r.status === 'review' ? 'In review' : 'Draft');
+  add('Template', r.template);
+  add('Language', r.lang);
+  add('Modified', r.modified);
+  add('Modified by', r.by);
+  if(r.childCount) add('Contains', r.childCount + ' items');
+  add('Permissions', r.perms);
+  add('Preview', r.preview);
+  add('Live', r.live);
+  const openLabel = r.kind === 'item' ? 'Open in Experience Workspace' : 'Open folder';
+  pop.innerHTML = `<div class="mp-head">Details</div>${rowsHtml}<div class="mp-actions"><button class="mp-btn" data-mp="open">${openLabel}</button></div>`;
+  document.body.appendChild(pop);
+  const rect = anchor.getBoundingClientRect();
+  const popW = 300;
+  let left = Math.max(10, rect.right - popW);
+  let top = rect.bottom + 6;
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+  const ph = pop.getBoundingClientRect().height;
+  if(top + ph > window.innerHeight - 10) pop.style.top = Math.max(66, rect.top - ph - 6) + 'px';
+  pop.querySelector('[data-mp="open"]').addEventListener('click', () => {
+    closeMetaPopover();
+    if(r.kind === 'item') openCanvas(r); else goToFolder([...folderPath, r.name]);
+  });
+}
+function closeMetaPopover(){ const p = document.getElementById('metaPop'); if(p) p.remove(); }
+document.addEventListener('click', (e) => {
+  const p = document.getElementById('metaPop');
+  if(p && !p.contains(e.target) && !e.target.classList.contains('more-btn')) closeMetaPopover();
+});
+
+// ---------- Click a file → open the Experience Workspace canvas mockup ----------
+// ---------- Unified Experience Workspace: Site / Layout / Content / Side-by-side ----------
+let ewsPage = { name: 'index', title: 'Home' };
+
+function setMode(mode){
+  const isSite = mode === 'site';
+  document.getElementById('siteView').classList.toggle('ews-hidden', !isSite);
+  document.getElementById('editorView').classList.toggle('ews-hidden', isSite);
+  document.body.classList.toggle('mode-editor', !isSite);
+  document.querySelectorAll('#siteSeg button').forEach(b => b.classList.toggle('active', b.dataset.mode === (isSite ? 'site' : mode)));
+  document.querySelectorAll('#editorSeg button').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  if(!isSite) document.getElementById('ewsCanvas').dataset.mode = mode;
+  window.scrollTo(0, 0);
+}
+
+function loadEwsPage(name, title){
+  ewsPage = { name, title: title || name };
+  document.getElementById('ewsCrumbPage').textContent = name;
+  document.querySelectorAll('#ewsTree .cv-tree-item').forEach(it => it.classList.toggle('active', it.dataset.name === name && it.dataset.folder !== 'true'));
+}
+
+// Clicking a page (row or ⋯ popover) opens it in the Workspace, defaulting to Layout mode.
+function openCanvas(r){
+  loadEwsPage(r.name, r.title);
+  setMode('layout');
+}
+
+document.querySelectorAll('#siteSeg button, #editorSeg button').forEach(b => {
+  b.addEventListener('click', () => setMode(b.dataset.mode));
+});
+document.getElementById('ewsHome').addEventListener('click', e => { e.preventDefault(); setMode('site'); });
+document.getElementById('ewsSiteCrumb').addEventListener('click', e => { e.preventDefault(); setMode('site'); });
+document.getElementById('ewsPublish').addEventListener('click', () => alert('Mockup: this would publish "' + ewsPage.name + '" to the live site.'));
+document.getElementById('ewsFeedback').addEventListener('click', () => alert('Mockup: this would open the feedback panel.'));
+
+// Editor Files tree (mirrors the real DA Files panel)
+const ewsTreeData = [
+  {name:'about-us'},{name:'already-investing'},{name:'articles',folder:true},{name:'articles'},
+  {name:'de',folder:true},{name:'demo-docs',folder:true},{name:'demo-slides',folder:true},
+  {name:'en',folder:true},{name:'es',folder:true},{name:'events',folder:true},{name:'events'},
+  {name:'experimentation',folder:true},{name:'extras'},{name:'faqs',folder:true},{name:'footer'},
+  {name:'forms',folder:true},{name:'fr',folder:true},{name:'fragments',folder:true},
+  {name:'guided-journey'},{name:'hi',folder:true},{name:'icons',folder:true},{name:'index'},
+  {name:'learn',folder:true},{name:'learn'},{name:'media',folder:true},{name:'nav'},
+  {name:'new-to-investing'},{name:'products',folder:true},{name:'products'},{name:'search'},
+  {name:'start-here',folder:true},{name:'start-here'},{name:'test',folder:true},
+];
+const ewsTreeEl = document.getElementById('ewsTree');
+ewsTreeData.forEach(t => {
+  const el = document.createElement('div');
+  el.className = 'cv-tree-item';
+  el.dataset.name = t.name;
+  if(t.folder) el.dataset.folder = 'true';
+  el.innerHTML = `<span class="tw">${t.folder ? '›' : ''}</span>${t.name}`;
+  if(!t.folder) el.addEventListener('click', () => {
+    loadEwsPage(t.name, t.name);
+    setMode(document.getElementById('ewsCanvas').dataset.mode || 'layout');
+  });
+  ewsTreeEl.appendChild(el);
+});
+loadEwsPage('index', 'Home');
+
+// ---------- Right rail: panel switching ----------
+const railLabels = { editor:'Editor', outline:'Outline', files:'Files', versions:'Versions', properties:'Properties' };
+function selectPanel(name){
+  document.getElementById('railSelLabel').textContent = railLabels[name];
+  document.querySelectorAll('.rail-panel').forEach(p => p.classList.toggle('ews-hidden', p.dataset.panel !== name));
+  document.querySelectorAll('.rail-menu-item').forEach(m => {
+    const on = m.dataset.panel === name;
+    m.classList.toggle('active', on);
+    let ck = m.querySelector('.ck');
+    if(on && !ck){ ck = document.createElement('span'); ck.className = 'ck'; ck.textContent = '✓'; m.appendChild(ck); }
+    else if(!on && ck){ ck.remove(); }
+  });
+  document.getElementById('railMenu').classList.add('ews-hidden');
+  if(name === 'outline') renderOutline();
+  if(name === 'properties') renderProps(selectedBlock);
+}
+document.getElementById('railSelect').addEventListener('click', e => { e.stopPropagation(); document.getElementById('railMenu').classList.toggle('ews-hidden'); });
+document.querySelectorAll('.rail-menu-item').forEach(m => m.addEventListener('click', () => selectPanel(m.dataset.panel)));
+document.addEventListener('click', e => {
+  const menu = document.getElementById('railMenu');
+  if(menu && !menu.classList.contains('ews-hidden') && !document.getElementById('railSelect').contains(e.target) && !menu.contains(e.target)) menu.classList.add('ews-hidden');
+});
+document.querySelectorAll('.ver-tabs button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.ver-tabs button').forEach(x => x.classList.remove('active')); b.classList.add('active');
+}));
+
+// ---------- Outline ----------
+let selectedBlock = 'hero';
+let dragIdx = null;
+let outline = [
+  { kind:'block', name:'hero' },
+  { kind:'block', name:'text' },
+  { kind:'block', name:'teaser' },
+  { kind:'block', name:'cards' },
+  { kind:'include', name:'related-articles' },
+  { kind:'block', name:'columns' },
+  { kind:'empty' },
+  { kind:'block', name:'section-metadata' },
+];
+function outlineLabel(s){
+  if(s.custom) return s.custom;
+  if(s.kind === 'include') return 'Include · ' + s.name;
+  if(s.kind === 'empty') return 'Empty section';
+  return s.name;
+}
+function renderOutline(){
+  const list = document.getElementById('outlineList');
+  list.innerHTML = '';
+  outline.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'outline-row' + (s.name && s.name === selectedBlock && s.kind !== 'empty' ? ' selected' : '');
+    row.draggable = true;
+    row.innerHTML =
+      '<span class="oh" title="Drag to reorder">⠿</span>' +
+      '<span class="olabel ' + (s.kind === 'empty' ? 'empty' : '') + '">' + outlineLabel(s) + '</span>' +
+      (s.kind === 'include' ? '<span class="otype">Include</span>' : '') +
+      '<span class="oact"><button data-act="rename" title="Rename">✎</button><button data-act="delete" title="Delete">🗑</button></span>';
+    row.addEventListener('click', e => {
+      if(e.target.closest('.oact')) return;
+      if(s.kind !== 'empty'){ selectedBlock = s.name; }
+      renderOutline();
+    });
+    const label = row.querySelector('.olabel');
+    row.querySelector('[data-act="rename"]').addEventListener('click', e => { e.stopPropagation(); startRename(label, s); });
+    label.addEventListener('dblclick', e => { e.stopPropagation(); startRename(label, s); });
+    row.querySelector('[data-act="delete"]').addEventListener('click', e => { e.stopPropagation(); outline.splice(i, 1); renderOutline(); });
+    row.addEventListener('dragstart', () => { dragIdx = i; row.classList.add('dragging'); });
+    row.addEventListener('dragend', () => { dragIdx = null; });
+    row.addEventListener('dragover', e => e.preventDefault());
+    row.addEventListener('drop', e => {
+      e.preventDefault();
+      if(dragIdx === null || dragIdx === i) return;
+      const [moved] = outline.splice(dragIdx, 1);
+      outline.splice(i, 0, moved);
+      dragIdx = null;
+      renderOutline();
+    });
+    list.appendChild(row);
+  });
+}
+function startRename(label, s){
+  label.contentEditable = 'true';
+  label.classList.remove('empty');
+  label.focus();
+  const range = document.createRange(); range.selectNodeContents(label);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  const finish = () => { label.contentEditable = 'false'; s.custom = label.textContent.trim() || undefined; renderOutline(); };
+  label.addEventListener('blur', finish, { once:true });
+  label.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); label.blur(); } });
+}
+document.getElementById('outlineAdd').addEventListener('click', () => { outline.push({ kind:'empty' }); renderOutline(); });
+
+// ---------- Properties inspector ----------
+const blockSchema = {
+  hero:    { type:'Hero', styles:['Default','Compact','Full-bleed'], align:true, bg:true, image:'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=600&q=60', cta:true },
+  text:    { type:'Text', styles:['Default','Lead','Small'], align:true, bg:true },
+  teaser:  { type:'Teaser', styles:['Default','Card','Banner'], align:true, bg:true, cta:true },
+  cards:   { type:'Cards', styles:['3-up','2-up','Carousel'], bg:true },
+  columns: { type:'Columns', styles:['50 / 50','33 / 67','Thirds'], bg:true },
+  'related-articles': { type:'Fragment include', include:true, ref:'/wknd-advanced/fragments/related-articles' },
+  'section-metadata': { type:'Section metadata', meta:true },
+};
+const propState = {};
+function renderProps(blockName){
+  const body = document.getElementById('propsBody');
+  const schema = blockSchema[blockName];
+  if(!schema){ body.innerHTML = '<div class="props-empty">Select a block in the Outline (or on the canvas) to see its properties.</div>'; return; }
+  if(schema.include){
+    body.innerHTML =
+      '<div class="props-head"><span class="pt">' + blockName + '</span><span class="badge b-fragment">Include</span></div>' +
+      '<div class="props-empty">This section references a reusable fragment. Edits happen in the fragment itself and roll out everywhere it&rsquo;s used.</div>' +
+      '<div class="prop-field"><label>Fragment path</label><input type="text" value="' + schema.ref + '" readonly></div>' +
+      '<div class="props-actions"><button class="btn primary" style="width:100%" id="openFrag">Open fragment</button></div>';
+    body.querySelector('#openFrag').addEventListener('click', () => alert('Mockup: this would open the fragment ' + schema.ref));
+    return;
+  }
+  const st = (propState[blockName] = propState[blockName] || { style:0, align:'center', bg:'none', mobile:true, cta:'Explore our guides', link:'/guides' });
+  const typeOptions = Object.keys(blockSchema).map(k => '<option ' + (k === blockName ? 'selected' : '') + '>' + k + '</option>').join('');
+  let html = '<div class="props-head"><span class="pt">' + blockName + '</span><span class="badge b-page">' + schema.type + '</span></div>';
+  html += '<div class="prop-group"><div class="pg-title">Block</div>';
+  html += '<div class="prop-field"><label>Type</label><select id="pfType">' + typeOptions + '</select></div>';
+  if(schema.styles) html += '<div class="prop-field"><label>Style</label><select id="pfStyle">' + schema.styles.map((s, i) => '<option ' + (i === st.style ? 'selected' : '') + '>' + s + '</option>').join('') + '</select></div>';
+  html += '</div>';
+  if(schema.align || schema.bg){
+    html += '<div class="prop-group"><div class="pg-title">Layout</div>';
+    if(schema.align) html += '<div class="prop-field"><label>Alignment</label><div class="seg-btns" id="pfAlign"><button data-a="left">⤎</button><button data-a="center">≡</button><button data-a="right">⤏</button></div></div>';
+    if(schema.bg) html += '<div class="prop-field"><label>Background</label><div class="swatches" id="pfBg">' +
+      ['none','#F6EFE6','#E6F1FF','#E4F5E9','#1B1B1B'].map(c => '<span class="swatch" data-c="' + c + '" style="background:' + (c === 'none' ? '#fff' : c) + '"></span>').join('') +
+      '</div></div>';
+    html += '</div>';
+  }
+  if(schema.image) html += '<div class="prop-group"><div class="pg-title">Media</div><div class="prop-thumb" style="background-image:url(' + schema.image + ')"></div><button class="btn" style="width:100%">Replace image</button></div>';
+  if(schema.cta) html += '<div class="prop-group"><div class="pg-title">Call to action</div><div class="prop-field"><label>Button text</label><input type="text" id="pfCta" value="' + st.cta + '"></div><div class="prop-field"><label>Link</label><input type="text" id="pfLink" value="' + st.link + '"></div></div>';
+  if(schema.meta) html += '<div class="prop-group"><div class="pg-title">Section metadata</div><div class="prop-field"><label>Key</label><input type="text" value="mbox"></div><div class="prop-field"><label>Value</label><input type="text" value="homepage-hero-mbox"></div></div>';
+  html += '<div class="prop-group"><div class="pg-title">Visibility</div><div class="prop-toggle">Show on mobile <span class="toggle ' + (st.mobile ? 'on' : '') + '" id="pfMobile"></span></div></div>';
+  body.innerHTML = html;
+
+  body.querySelector('#pfType').addEventListener('change', e => { selectedBlock = e.target.value; renderProps(selectedBlock); });
+  if(schema.styles) body.querySelector('#pfStyle').addEventListener('change', e => { st.style = e.target.selectedIndex; });
+  if(schema.align){
+    const seg = body.querySelector('#pfAlign');
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.a === st.align));
+    seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { st.align = b.dataset.a; seg.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b)); applyHeroAlign(blockName, st.align); }));
+  }
+  if(schema.bg){
+    const sw = body.querySelector('#pfBg');
+    sw.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', s.dataset.c === st.bg));
+    sw.querySelectorAll('.swatch').forEach(s => s.addEventListener('click', () => { st.bg = s.dataset.c; sw.querySelectorAll('.swatch').forEach(x => x.classList.toggle('active', x === s)); }));
+  }
+  const mob = body.querySelector('#pfMobile');
+  mob.addEventListener('click', () => { st.mobile = !st.mobile; mob.classList.toggle('on', st.mobile); });
+  const cta = body.querySelector('#pfCta'); if(cta) cta.addEventListener('input', e => st.cta = e.target.value);
+  const link = body.querySelector('#pfLink'); if(link) link.addEventListener('input', e => st.link = e.target.value);
+  if(schema.align) applyHeroAlign(blockName, st.align);
+}
+function applyHeroAlign(blockName, align){
+  if(blockName !== 'hero') return;
+  const hero = document.querySelector('#editorView .wknd-hero');
+  const inner = document.querySelector('#editorView .wknd-hero-inner');
+  if(!hero) return;
+  hero.style.justifyContent = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
+  if(inner) inner.style.textAlign = align;
+}
+
+selectPanel('files');
+
+renderCrumbs();
+render('all', '');
+setMode('site');
+</script>
+</body>
+</html>

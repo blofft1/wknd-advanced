@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document Authoring — Content Fragments (Prototype)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="appbar">
+    <div class="logomark">A</div>
+    <svg class="app-switcher" viewBox="0 0 24 24" fill="none"><path d="M4 5h4v4H4V5zm0 6h4v4H4v-4zm0 6h4v4H4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z" fill="currentColor"/></svg>
+    <div class="app-title">Document Authoring <small>Content Fragments</small></div>
+    <div class="breadcrumb"><b>blofft1</b> / wknd-advanced</div>
+    <div class="appbar-spacer"></div>
+    <div class="appbar-icon">⌕</div>
+    <div class="appbar-icon">?</div>
+    <div class="appbar-icon" title="Inbox">🔔</div>
+    <div class="avatar">B</div>
+  </div>
+
+  <div class="shell">
+    <div class="rail">
+      <div class="rail-item">⌂</div>
+      <div class="rail-item active">▤</div>
+      <div class="rail-item">◱</div>
+      <div class="rail-item">💡</div>
+      <div class="rail-item rail-bottom">⚙</div>
+    </div>
+
+    <div class="main">
+      <div class="action-menu">
+        <div class="action-group">
+          <span class="action-group-label">Content</span>
+          <a class="action-item" href="translation.html">🌐 Translation</a>
+          <a class="action-item" href="msm.html">🔗 MSM</a>
+          <a class="action-item active" href="fragments.html">🧩 Fragments</a>
+          <a class="action-item" href="aemcoder.html">⬆ Import</a>
+        </div>
+        <div class="action-divider"></div>
+        <div class="action-group">
+          <span class="action-group-label">Governance</span>
+          <div class="action-item">⏱ Scheduler</div>
+          <div class="action-item">🔒 Permissions</div>
+        </div>
+      </div>
+
+      <div class="crumbs-row" style="border-radius:8px; border:1px solid var(--gray-200); margin-bottom:18px;">
+        <a class="crumb-link" href="index.html">⌂ blofft1</a>
+        <span class="crumb-sep">›</span>
+        <a class="crumb-link" href="index.html">wknd-advanced</a>
+        <span class="crumb-sep">›</span>
+        <span class="crumb-link active">Content Fragments</span>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h1>Content Fragments</h1>
+          <p>Structured, model-based content you can reuse across pages and channels. Search and filter on the left; the selected fragment previews on the right.</p>
+        </div>
+        <button class="btn primary" id="createBtn">+ Create New Fragment</button>
+      </div>
+
+      <div class="frag-layout">
+        <div class="frag-left">
+          <div class="frag-search">⌕ <input id="fragSearch" placeholder="Search fragments…"></div>
+          <div class="frag-filters" id="fragFilters"></div>
+          <div class="frag-list" id="fragList"></div>
+        </div>
+        <div class="frag-right" id="fragRight"></div>
+      </div>
+
+      <div class="parity-note" style="max-width:640px;"><b>Classic AEM equivalent:</b> the Content Fragments console — structured content authored against Content Fragment Models, referenced by pages and delivered headlessly via GraphQL.</div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="fragModalBackdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h2>Create New Fragment</h2>
+          <div class="modal-step-indicator" id="fragStep">Step 1 of 2 — Model</div>
+        </div>
+        <div class="modal-close" id="fragClose">✕</div>
+      </div>
+      <div class="modal-body" id="fragModalBody"></div>
+      <div class="modal-footer">
+        <button class="btn" id="fragBack">Back</button>
+        <button class="btn primary" id="fragNext">Next</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const fragments = [
+  {name:'related-articles', title:'Related Articles (Bento)', model:'Article Reference', status:'published', modified:'Jul 20, 2026', by:'K. Robin', location:'/wknd-advanced/fragments/related-articles',
+    preview:{type:'list', items:['5 Alpine Trails Worth the Climb','Packing Light for Long Weekends','Where to Eat in Reykjavík']}, fields:{Layout:'Bento', 'Max items':'6', 'Source tag':'travel'}},
+  {name:'hero-banner', title:'Homepage Hero Banner', model:'Banner', status:'published', modified:'Jul 14, 2026', by:'K. Robin', location:'/wknd-advanced/fragments/hero-banner',
+    preview:{type:'card', img:'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=800&q=60', headline:'The Art of the Perfect Getaway', body:'Explore · Wander · Belong'}, fields:{'CTA text':'Explore trips', 'CTA link':'/trips', Theme:'Light'}},
+  {name:'author-jane', title:'Jane Rivera', model:'Author', status:'published', modified:'Jul 2, 2026', by:'B. Loeffler', location:'/wknd-advanced/fragments/authors/jane-rivera',
+    preview:{type:'author', initials:'JR', name:'Jane Rivera', role:'Senior Travel Writer', bio:'Jane has hiked six continents and written for WKND since day one. She covers slow travel, mountain routes, and the occasional questionable street food.'}, fields:{Email:'jane@wknd.com', Region:'EMEA', Articles:'23'}},
+  {name:'trip-alps', title:'Alps Expedition', model:'Trip', status:'draft', modified:'Jul 18, 2026', by:'B. Loeffler', location:'/wknd-advanced/fragments/trips/alps-expedition',
+    preview:{type:'card', img:'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=60', headline:'7-Day Alps Expedition', body:'A guided trek through the high passes of the French and Swiss Alps, ending in Chamonix.'}, fields:{Price:'$2,400', Duration:'7 days', Difficulty:'Advanced'}},
+  {name:'promo-blackfriday', title:'Black Friday Promo', model:'Promo', status:'review', modified:'Jul 20, 2026', by:'B. Loeffler', location:'/wknd-advanced/fragments/promos/black-friday',
+    preview:{type:'card', headline:'Up to 40% off', body:'Limited-time deals on all guided trips through the end of November.'}, fields:{Discount:'40%', Starts:'Nov 24', Ends:'Nov 30'}},
+  {name:'newsletter-cta', title:'Newsletter Signup CTA', model:'Promo', status:'published', modified:'Jul 10, 2026', by:'K. Robin', location:'/wknd-advanced/fragments/cta-newsletter',
+    preview:{type:'card', headline:'Never miss a weekend', body:'Get fresh trip ideas and local tips delivered to your inbox.'}, fields:{'CTA text':'Subscribe', List:'wknd-weekly'}},
+  {name:'author-marco', title:'Marco Bianchi', model:'Author', status:'published', modified:'Jun 28, 2026', by:'B. Loeffler', location:'/wknd-advanced/fragments/authors/marco-bianchi',
+    preview:{type:'author', initials:'MB', name:'Marco Bianchi', role:'Photographer', bio:'Marco captures the light between destinations. Based in Milan, he shoots for WKND across the Mediterranean.'}, fields:{Email:'marco@wknd.com', Region:'EMEA', Articles:'11'}},
+];
+
+const models = ['All', 'Article Reference', 'Banner', 'Author', 'Trip', 'Promo'];
+const statusText = { published:'Published', review:'In review', draft:'Draft' };
+
+let activeModel = 'All';
+let selected = fragments[0];
+
+const listEl = document.getElementById('fragList');
+const rightEl = document.getElementById('fragRight');
+const searchEl = document.getElementById('fragSearch');
+const filtersEl = document.getElementById('fragFilters');
+
+models.forEach(m => {
+  const chip = document.createElement('div');
+  chip.className = 'chip-filter' + (m === activeModel ? ' active' : '');
+  chip.textContent = m;
+  chip.addEventListener('click', () => { activeModel = m; document.querySelectorAll('#fragFilters .chip-filter').forEach(c => c.classList.toggle('active', c === chip)); renderList(); });
+  filtersEl.appendChild(chip);
+});
+
+function previewHtml(f){
+  const p = f.preview;
+  if(p.type === 'author'){
+    return `<div class="fpv-card"><div class="fpv-author"><div class="fpv-avatar">${p.initials}</div><div><h3 style="margin:0 0 2px;">${p.name}</h3><div style="font-size:12.5px;color:var(--gray-600);">${p.role}</div></div></div><div class="fpv-body" style="border-top:1px solid var(--gray-100);"><p>${p.bio}</p></div></div>`;
+  }
+  if(p.type === 'list'){
+    return `<div class="fpv-card"><div class="fpv-body"><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--gray-800);line-height:1.9;">${p.items.map(i => `<li>${i}</li>`).join('')}</ul></div></div>`;
+  }
+  return `<div class="fpv-card">${p.img ? `<div class="fpv-img" style="background-image:url('${p.img}')"></div>` : ''}<div class="fpv-body"><h3>${p.headline}</h3><p>${p.body}</p></div></div>`;
+}
+
+function renderDetail(f){
+  if(!f){ rightEl.innerHTML = `<div class="frag-detail"><div class="frag-empty" style="padding:60px 20px;">Select a fragment to preview it.</div></div>`; return; }
+  const extra = Object.entries(f.fields).map(([k, v]) => `<div class="fr"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  rightEl.innerHTML = `
+    <div class="frag-detail">
+      <div class="frag-detail-head">
+        <div>
+          <h2>${f.title}</h2>
+          <div class="sub"><span class="status ${f.status}"><span class="dot"></span>${statusText[f.status]}</span> · ${f.model}</div>
+        </div>
+        <div class="frag-detail-actions"><button class="btn primary">Edit</button><button class="btn">Preview</button></div>
+      </div>
+      <div class="frag-preview">${previewHtml(f)}</div>
+      <div class="frag-loc"><span class="k">📁 Location</span><span class="v">${f.location}</span></div>
+      <div class="frag-fields">
+        <div class="fr"><span class="k">Model</span><span class="v">${f.model}</span></div>
+        <div class="fr"><span class="k">Status</span><span class="v">${statusText[f.status]}</span></div>
+        <div class="fr"><span class="k">Modified</span><span class="v">${f.modified} · ${f.by}</span></div>
+        ${extra}
+      </div>
+    </div>`;
+}
+
+function renderList(){
+  const q = searchEl.value.toLowerCase();
+  const list = fragments.filter(f => (activeModel === 'All' || f.model === activeModel) && (!q || f.title.toLowerCase().includes(q) || f.name.toLowerCase().includes(q)));
+  listEl.innerHTML = '';
+  if(!list.length){ listEl.innerHTML = '<div class="frag-empty">No fragments match.</div>'; return; }
+  if(!list.includes(selected)){ selected = list[0]; renderDetail(selected); }
+  list.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'frag-item' + (f === selected ? ' selected' : '');
+    el.innerHTML = `<span class="status ${f.status}" title="${statusText[f.status]}"><span class="dot"></span></span><div class="fi-main"><div class="fi-title">${f.title}</div><div class="fi-sub">${f.model} · ${f.location}</div></div>`;
+    el.addEventListener('click', () => { selected = f; renderList(); renderDetail(f); });
+    listEl.appendChild(el);
+  });
+}
+
+searchEl.addEventListener('input', renderList);
+
+// ---------- Create New Fragment wizard ----------
+const fragModels = [
+  {name:'Article Reference', icon:'📄', desc:'Curated list of articles to surface elsewhere.', loc:'/wknd-advanced/fragments'},
+  {name:'Banner', icon:'🖼', desc:'Headline, image, and call-to-action for hero or promo areas.', loc:'/wknd-advanced/fragments'},
+  {name:'Author', icon:'👤', desc:'Name, role, bio, and contact for content bylines.', loc:'/wknd-advanced/fragments/authors'},
+  {name:'Trip', icon:'🧭', desc:'Structured trip details — price, duration, difficulty.', loc:'/wknd-advanced/fragments/trips'},
+  {name:'Promo', icon:'🏷', desc:'Short promotional message with dates and a CTA.', loc:'/wknd-advanced/fragments/promos'},
+];
+let fStep = 0;
+let fSel = { model:null, title:'', name:'', location:'' };
+
+function slugify(s){ return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+
+function defaultPreview(model, title){
+  if(model === 'Author') return { type:'author', initials:(title.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() || 'AA'), name:title, role:'—', bio:'New author fragment — add a bio to get started.' };
+  if(model === 'Article Reference') return { type:'list', items:['Add your first referenced article…'] };
+  return { type:'card', headline:title, body:'New ' + model.toLowerCase() + ' fragment. Open it to add content.' };
+}
+
+function openFragModal(){
+  fStep = 0;
+  fSel = { model:null, title:'', name:'', location:'' };
+  document.getElementById('fragModalBackdrop').classList.add('open');
+  renderFragWizard();
+}
+function closeFragModal(){ document.getElementById('fragModalBackdrop').classList.remove('open'); }
+
+window.pickModel = function(name){
+  fSel.model = name;
+  const m = fragModels.find(x => x.name === name);
+  if(!fSel.location) fSel.location = m.loc;
+  document.getElementById('fragNext').disabled = false;
+};
+
+function renderFragWizard(){
+  const body = document.getElementById('fragModalBody');
+  const step = document.getElementById('fragStep');
+  const back = document.getElementById('fragBack');
+  const next = document.getElementById('fragNext');
+  back.style.display = fStep === 0 ? 'none' : 'inline-block';
+  if(fStep === 0){
+    step.textContent = 'Step 1 of 2 — Model';
+    next.textContent = 'Next';
+    next.disabled = !fSel.model;
+    body.innerHTML = '<h3>Choose a Content Fragment Model</h3>' + fragModels.map(m => `
+      <label class="wizard-option">
+        <input type="radio" name="fmodel" ${fSel.model === m.name ? 'checked' : ''} onchange="pickModel('${m.name}')">
+        <div><div class="lbl">${m.icon} ${m.name}</div><div class="desc">${m.desc}</div></div>
+      </label>`).join('');
+  } else {
+    step.textContent = 'Step 2 of 2 — Details';
+    next.textContent = 'Create';
+    next.disabled = !fSel.title.trim();
+    body.innerHTML = `
+      <h3>Fragment details</h3>
+      <div class="wizard-summary-line"><span>Model</span><b>${fSel.model}</b></div>
+      <div class="prop-field" style="margin-top:14px;"><label>Title</label><input type="text" id="fTitle" value="${fSel.title}" placeholder="e.g. Summer Adventure Guide"></div>
+      <div class="prop-field"><label>Name (URL)</label><input type="text" id="fName" value="${fSel.name}" placeholder="auto-generated from title"></div>
+      <div class="prop-field"><label>Location</label><input type="text" id="fLoc" value="${fSel.location}"></div>
+      <div class="frag-loc" style="margin:10px 0 0;"><span class="k">📁 Path</span><span class="v" id="fPathPreview">${fSel.location}/${fSel.name || '…'}</span></div>`;
+    const tEl = body.querySelector('#fTitle');
+    const nEl = body.querySelector('#fName');
+    const lEl = body.querySelector('#fLoc');
+    const pv = body.querySelector('#fPathPreview');
+    let nameEdited = !!fSel.name;
+    const updatePath = () => { pv.textContent = (lEl.value || '') + '/' + (nEl.value || '…'); };
+    tEl.addEventListener('input', () => { fSel.title = tEl.value; if(!nameEdited){ nEl.value = slugify(tEl.value); fSel.name = nEl.value; } next.disabled = !fSel.title.trim(); updatePath(); });
+    nEl.addEventListener('input', () => { nameEdited = true; fSel.name = slugify(nEl.value); nEl.value = fSel.name; updatePath(); });
+    lEl.addEventListener('input', () => { fSel.location = lEl.value; updatePath(); });
+    tEl.focus();
+  }
+}
+
+document.getElementById('fragNext').addEventListener('click', () => {
+  if(fStep === 0){ if(!fSel.model) return; fStep = 1; renderFragWizard(); return; }
+  if(!fSel.title.trim()) return;
+  if(!fSel.name) fSel.name = slugify(fSel.title);
+  const nf = {
+    name: fSel.name, title: fSel.title, model: fSel.model, status:'draft',
+    modified:'Just now', by:'Bill Lofft',
+    location: (fSel.location || '/wknd-advanced/fragments') + '/' + fSel.name,
+    preview: defaultPreview(fSel.model, fSel.title), fields: {}
+  };
+  fragments.unshift(nf);
+  activeModel = 'All';
+  document.querySelectorAll('#fragFilters .chip-filter').forEach(c => c.classList.toggle('active', c.textContent === 'All'));
+  searchEl.value = '';
+  selected = nf;
+  renderList();
+  renderDetail(nf);
+  closeFragModal();
+});
+document.getElementById('fragBack').addEventListener('click', () => { if(fStep > 0){ fStep--; renderFragWizard(); } });
+document.getElementById('fragClose').addEventListener('click', closeFragModal);
+document.getElementById('fragModalBackdrop').addEventListener('click', e => { if(e.target.id === 'fragModalBackdrop') closeFragModal(); });
+document.getElementById('createBtn').addEventListener('click', openFragModal);
+
+renderList();
+renderDetail(selected);
+</script>
+</body>
+</html>

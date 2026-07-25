@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WKND Advanced — Document Authoring</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="appbar">
+    <div class="logomark">A</div>
+    <svg class="app-switcher" id="appSwitcher" viewBox="0 0 24 24" fill="none"><path d="M4 5h4v4H4V5zm0 6h4v4H4v-4zm0 6h4v4H4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4zm6-12h4v4h-4V5zm0 6h4v4h-4v-4zm0 6h4v4h-4v-4z" fill="currentColor"/></svg>
+    <div class="app-title">Document Authoring <small>Home</small></div>
+    <div class="breadcrumb"><b>blofft1</b> / wknd-advanced</div>
+    <div class="appbar-spacer"></div>
+    <div class="appbar-icon">⌕</div>
+    <div class="appbar-icon">?</div>
+    <div class="appbar-icon" title="Inbox">🔔</div>
+    <div class="avatar">B</div>
+  </div>
+
+  <div class="appsw-menu" id="appswMenu">
+    <div class="appsw-label">Content</div>
+    <a class="appsw-item" href="workspace.html"><span class="si">🗂</span> Sites &amp; Content</a>
+    <a class="appsw-item" href="fragments.html"><span class="si">🧩</span> Content Fragments</a>
+    <a class="appsw-item" href="translation.html"><span class="si">🌐</span> Translation</a>
+    <a class="appsw-item" href="aemcoder.html"><span class="si">✦</span> Import (AEM Coder)</a>
+    <div class="appsw-label">Governance</div>
+    <a class="appsw-item" href="msm.html"><span class="si">🔗</span> Multi-Site Management</a>
+    <a class="appsw-item" href="#" data-app="permissions"><span class="si">🔒</span> Permissions</a>
+    <a class="appsw-item" href="#" data-app="workflow"><span class="si">✓</span> Workflow &amp; Governance</a>
+    <a class="appsw-item" href="#" data-app="scheduler"><span class="si">⏱</span> Scheduler</a>
+  </div>
+
+  <div class="shell">
+    <div class="rail">
+      <div class="rail-item active">⌂</div>
+      <div class="rail-item">▤</div>
+      <div class="rail-item">◱</div>
+      <div class="rail-item">💡</div>
+      <div class="rail-item rail-bottom">⚙</div>
+    </div>
+
+    <div class="main">
+      <div class="dash">
+
+        <!-- Site-specific hero -->
+        <div class="site-hero">
+          <div>
+            <div class="eyebrow">Site</div>
+            <h1>WKND Advanced</h1>
+            <div class="meta"><span class="status published"><span class="dot"></span>Published</span> · blofft1 / wknd-advanced · last published 2h ago</div>
+            <div class="hero-actions">
+              <a class="btn primary" href="workspace.html">Open content</a>
+              <a class="btn" href="workspace.html">Preview live</a>
+              <button class="btn" id="newPageBtn">+ New page</button>
+            </div>
+          </div>
+          <div class="hero-thumb">
+            <div class="bar"><i></i><i></i><i></i></div>
+            <div class="shot" style="background-image:url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=700&q=60')"></div>
+          </div>
+        </div>
+
+        <!-- Global find -->
+        <div class="find">
+          <div class="find-bar">✦ <input id="findInput" placeholder="Find a page, fragment, or asset in WKND Advanced…" autocomplete="off"></div>
+          <div class="find-results" id="findResults"></div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="dash-grid">
+          <div class="dash-col">
+            <div class="card">
+              <div class="card-head"><h3>Site structure</h3><a href="workspace.html">Open in Content →</a></div>
+              <div class="mtree" id="mtree"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Latest updates</h3><a href="#">View all →</a></div>
+              <div class="card-body" id="activity"></div>
+            </div>
+          </div>
+
+          <div class="dash-col">
+            <div class="card">
+              <div class="card-head"><h3>My queue</h3><span style="font-size:12px;color:var(--gray-500);">3 items</span></div>
+              <div class="card-body" id="queue"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Apps</h3><a href="#" id="allApps">All apps →</a></div>
+              <div class="app-mini-grid" id="appMini"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Site status</h3></div>
+              <div class="stat-list">
+                <div class="stat-line"><span class="k">Publish status</span><span class="v" style="color:var(--green-700);">Published</span></div>
+                <div class="stat-line"><span class="k">Last published</span><span class="v">Jul 20, 2026 · 2h ago</span></div>
+                <div class="stat-line"><span class="k">Pages</span><span class="v">24</span></div>
+                <div class="stat-line"><span class="k">In review</span><span class="v">1</span></div>
+                <div class="stat-line"><span class="k">Locales</span><span class="v">3 · 2 in sync</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Visibility (LLMO) -->
+        <div class="llmo-section">
+          <div class="llmo-head">
+            <div class="lt"><h2>AI Visibility</h2><span class="llmo-badge">LLMO</span><span class="sub">Powered by Adobe LLM Optimizer</span></div>
+            <div class="llmo-platforms">
+              <span class="pf">ChatGPT</span><span class="pf">Gemini</span><span class="pf">Perplexity</span><span class="pf">Copilot</span><span class="pf">AI Overviews</span>
+              <a class="btn" href="https://play.llmo.now/org/demo-org/insights/brand-presence?siteId=frescopa.coffee" target="_blank" rel="noopener">Open in LLM Optimizer →</a>
+            </div>
+          </div>
+          <div class="llmo-metrics">
+            <div class="llmo-metric"><div class="n">62<small>/100</small></div><div class="l">Visibility score</div><div class="d up">▲ 8 this week</div></div>
+            <div class="llmo-metric"><div class="n">1,284</div><div class="l">Brand mentions</div><div class="d up">▲ 14%</div></div>
+            <div class="llmo-metric"><div class="n">96</div><div class="l">Citations</div><div class="d down">▼ 3%</div></div>
+            <div class="llmo-metric"><div class="n">18%</div><div class="l">Share of voice</div><div class="d">vs 4 competitors</div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Opportunities · readability &amp; structure</h3><a href="workspace.html">Fix in Content →</a></div>
+            <div id="llmoOps"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="appModalBackdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h2 id="appModalTitle">—</h2><div class="modal-step-indicator">Document Authoring App</div></div>
+        <div class="modal-close" id="appModalClose">✕</div>
+      </div>
+      <div class="modal-body" id="appModalBody"></div>
+      <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="btn primary" id="appModalOk">Got it</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ---------- Preview-app modals ---------- */
+const apps = {
+  permissions: { title:'Permissions', desc:'Manage who can read or write content — by group or individual, down to the folder level.', parity:'The AEM Permissions console (ACLs on the content tree).' },
+  workflow: { title:'Workflow & Governance', desc:'Route content through reviews and approvals with publish gates, so nothing ships until it’s signed off.', parity:'AEM Workflow + the Inbox / task console.' },
+  scheduler: { title:'Scheduler', desc:'Schedule content — and snapshots — to publish or unpublish automatically at a future date and time.', parity:'Scheduled activation / launches.' },
+};
+const backdrop = document.getElementById('appModalBackdrop');
+function openApp(key){
+  const a = apps[key]; if(!a) return;
+  document.getElementById('appModalTitle').textContent = a.title;
+  document.getElementById('appModalBody').innerHTML =
+    `<div style="font-size:13px; line-height:1.6; color:var(--gray-800);">${a.desc}</div>` +
+    `<div class="parity-note"><b>Classic AEM equivalent:</b> ${a.parity}</div>`;
+  backdrop.classList.add('open');
+}
+function closeApp(){ backdrop.classList.remove('open'); }
+document.getElementById('appModalClose').addEventListener('click', closeApp);
+document.getElementById('appModalOk').addEventListener('click', closeApp);
+backdrop.addEventListener('click', (e) => { if(e.target === backdrop) closeApp(); });
+
+/* ---------- App-switcher menu ---------- */
+const sw = document.getElementById('appSwitcher');
+const swMenu = document.getElementById('appswMenu');
+function toggleSw(e){ e.stopPropagation(); swMenu.classList.toggle('open'); }
+sw.addEventListener('click', toggleSw);
+document.getElementById('allApps').addEventListener('click', (e) => { e.preventDefault(); toggleSw(e); });
+document.addEventListener('click', (e) => { if(!swMenu.contains(e.target) && e.target !== sw) swMenu.classList.remove('open'); });
+swMenu.querySelectorAll('[data-app]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); swMenu.classList.remove('open'); openApp(el.dataset.app); }));
+
+/* ---------- Find ---------- */
+const findIndex = [
+  { t:'Home (index)', ty:'Page', c:'c-blue', p:'/index' },
+  { t:'About Us', ty:'Page', c:'c-blue', p:'/about-us' },
+  { t:'Already Investing', ty:'Page', c:'c-blue', p:'/already-investing' },
+  { t:'Events', ty:'Page', c:'c-blue', p:'/events' },
+  { t:'Articles Index', ty:'Page', c:'c-blue', p:'/articles' },
+  { t:'Trips Worth Taking — Extras', ty:'Page', c:'c-blue', p:'/extras' },
+  { t:'Related Articles (Bento)', ty:'Fragment', c:'c-purple', p:'/fragments/related-articles' },
+  { t:'Homepage Hero Banner', ty:'Fragment', c:'c-purple', p:'/fragments/hero-banner' },
+  { t:'German (de)', ty:'Locale', c:'c-teal', p:'/de' },
+  { t:'Spanish (es)', ty:'Locale', c:'c-teal', p:'/es' },
+  { t:'Search Icon', ty:'Asset', c:'c-orange', p:'/icons/search.svg' },
+];
+const findInput = document.getElementById('findInput');
+const findResults = document.getElementById('findResults');
+function renderFind(){
+  const q = findInput.value.toLowerCase().trim();
+  if(!q){ findResults.classList.remove('open'); return; }
+  const hits = findIndex.filter((r) => r.t.toLowerCase().includes(q) || r.p.toLowerCase().includes(q)).slice(0, 7);
+  findResults.innerHTML = hits.length
+    ? hits.map((r) => `<a class="find-row" href="workspace.html"><span class="fr-type ${r.c}">${r.ty}</span>${r.t}<span class="fr-path">${r.p}</span></a>`).join('')
+    : '<div class="find-row" style="color:var(--gray-500);cursor:default;">No matches</div>';
+  findResults.classList.add('open');
+}
+findInput.addEventListener('input', renderFind);
+findInput.addEventListener('focus', renderFind);
+document.addEventListener('click', (e) => { if(!document.querySelector('.find').contains(e.target)) findResults.classList.remove('open'); });
+
+/* ---------- Site structure quick view ---------- */
+const mtreeData = [
+  { n:'index', ic:'📄' }, { n:'about-us', ic:'📄' }, { n:'articles', ic:'📁', c:12 },
+  { n:'events', ic:'📄' }, { n:'en', ic:'📁', c:9 }, { n:'de', ic:'📁', c:9 },
+  { n:'es', ic:'📁', c:9 }, { n:'fragments', ic:'📁', c:7 }, { n:'config', ic:'📁', c:3 },
+];
+document.getElementById('mtree').innerHTML = mtreeData.map((r) =>
+  `<a class="mtree-row" href="workspace.html"><span class="mt-ic">${r.ic}</span>${r.n}${r.c ? `<span class="mt-count">${r.c}</span>` : ''}</a>`
+).join('');
+
+/* ---------- Latest updates ---------- */
+const activity = [
+  { av:'KR', c:'c-blue', txt:'<b>K. Robin</b> published <b>About Us</b>', t:'2 hours ago' },
+  { av:'BL', c:'c-purple', txt:'<b>B. Loeffler</b> sent <b>Trips Worth Taking — Extras</b> for review', t:'3 hours ago' },
+  { av:'AI', c:'c-teal', txt:'<b>AI Assistant</b> imported 4 pages via AEM Coder', t:'yesterday' },
+  { av:'KR', c:'c-blue', txt:'<b>K. Robin</b> updated <b>Global Navigation</b>', t:'2 days ago' },
+  { av:'BL', c:'c-purple', txt:'<b>B. Loeffler</b> created fragment <b>Author Bio</b>', t:'3 days ago' },
+];
+document.getElementById('activity').innerHTML = activity.map((a) =>
+  `<div class="act-row"><div class="act-av ${a.c}">${a.av}</div><div class="act-txt">${a.txt}<span class="t">${a.t}</span></div></div>`
+).join('');
+
+/* ---------- My queue ---------- */
+const queue = [
+  { ic:'⏳', c:'c-purple', t:'Trips Worth Taking — Extras', s:'Awaiting your review', btn:'Review', prim:true },
+  { ic:'✎', c:'c-blue', t:'Fall Preview', s:'Draft you started', btn:'Resume' },
+  { ic:'🌐', c:'c-teal', t:'German (de) rollout', s:'Translation ready to approve', btn:'Approve' },
+];
+document.getElementById('queue').innerHTML = queue.map((q) =>
+  `<div class="q-row"><div class="q-ic ${q.c}">${q.ic}</div><div class="q-main"><div class="qt">${q.t}</div><div class="qs">${q.s}</div></div><button class="q-btn ${q.prim ? 'primary' : ''}">${q.btn}</button></div>`
+).join('');
+document.querySelectorAll('#queue .q-btn').forEach((b, i) => b.addEventListener('click', () => { window.location.href = 'workspace.html'; }));
+
+/* ---------- Apps (compact) ---------- */
+const appMini = [
+  { l:'Content', ic:'🗂', c:'c-blue', href:'workspace.html' },
+  { l:'Fragments', ic:'🧩', c:'c-purple', href:'fragments.html' },
+  { l:'Translation', ic:'🌐', c:'c-teal', href:'translation.html' },
+  { l:'MSM', ic:'🔗', c:'c-blue', href:'msm.html' },
+  { l:'Import', ic:'✦', c:'c-orange', href:'aemcoder.html' },
+  { l:'Permissions', ic:'🔒', c:'c-gray', app:'permissions' },
+  { l:'Workflow', ic:'✓', c:'c-green', app:'workflow' },
+  { l:'Scheduler', ic:'⏱', c:'c-orange', app:'scheduler' },
+];
+document.getElementById('appMini').innerHTML = appMini.map((a) => {
+  const inner = `<div class="am-tile ${a.c}">${a.ic}</div><div class="am-l">${a.l}</div>`;
+  return a.href ? `<a class="app-mini" href="${a.href}">${inner}</a>` : `<div class="app-mini" data-app="${a.app}">${inner}</div>`;
+}).join('');
+document.querySelectorAll('#appMini [data-app]').forEach((el) => el.addEventListener('click', () => openApp(el.dataset.app)));
+
+document.getElementById('newPageBtn').addEventListener('click', () => alert('Mockup: this would start the “New page” flow — pick a template and location, then open it in the editor.'));
+
+/* ---------- AI Visibility (LLMO) opportunities ---------- */
+const catLabel = { readability:'Readability', structure:'Structure', schema:'Schema', content:'Content' };
+const llmoOps = [
+  { t:'Lead the Home hero with a direct answer', d:'The hero opens with poetic copy (“The Art of the Perfect Getaway”). LLMs extract the first clear, factual sentence — add a one-line summary of what WKND is and does.', cat:'readability', impact:'high', page:'/index' },
+  { t:'Add an FAQ block with FAQPage schema', d:'Q&A marked up with FAQPage schema is the single most-cited structure in AI answers. Mark up the existing questions on /faqs.', cat:'schema', impact:'high', page:'/faqs' },
+  { t:'Publish llms.txt + per-page summaries', d:'Give models a machine-readable map of the site and a 2–3 sentence summary per page so they index your key facts correctly.', cat:'structure', impact:'high', page:'site-wide' },
+  { t:'Break “The Idea” into scannable sub-sections', d:'Long paragraphs lower extractability. Split into short paragraphs under descriptive H2/H3 subheads.', cat:'readability', impact:'medium', page:'/index' },
+  { t:'Structure trip guides as HowTo steps', d:'Format trip articles as clear numbered steps with HowTo schema so they surface for “how to plan…” prompts.', cat:'structure', impact:'medium', page:'/articles' },
+  { t:'Add author bios and dates (E-E-A-T)', d:'Attribution and freshness raise trust and citation rate. Wire the Author fragments into article bylines.', cat:'content', impact:'medium', page:'/articles' },
+  { t:'Add descriptive alt text and fix heading order', d:'Hero and card images lack descriptive alt text, and heading levels skip — both help models parse page meaning.', cat:'structure', impact:'low', page:'/about-us' },
+  { t:'Add concrete stats and cited quotes', d:'Content with statistics and cited quotes sees ~30–40% higher LLM visibility. Add data points to your key pages.', cat:'content', impact:'low', page:'site-wide' },
+];
+document.getElementById('llmoOps').innerHTML = llmoOps.map((o) => `
+  <div class="op-row">
+    <span class="op-impact ${o.impact}"></span>
+    <div class="op-main">
+      <div class="ot">${o.t}</div>
+      <div class="od">${o.d}</div>
+      <div class="op-meta"><span class="op-cat ${o.cat}">${catLabel[o.cat]}</span><span class="op-page">${o.page}</span></div>
+    </div>
+    <span class="op-lift ${o.impact}">${o.impact} impact</span>
+  </div>`).join('');
+document.querySelectorAll('#llmoOps .op-row').forEach((r) => r.addEventListener('click', () => { window.location.href = 'workspace.html'; }));
+</script>
+</body>
+</html>
