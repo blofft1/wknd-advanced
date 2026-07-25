@@ -718,6 +718,11 @@ body.mode-editor .anno-toggle, body.mode-editor .anno-legend, body.mode-editor .
 .tree-row .tn{ flex:1; min-width:0; }
 .tree-row.folder .tn{ font-weight:600; }
 .tree-row .tc{ font-size:11px; color:var(--gray-500); background:var(--gray-100); border-radius:var(--radius-pill); padding:1px 9px; flex:0 0 auto; }
+.tree-row.editing .tn{ color:var(--gray-900); }
+.tree-edit{ margin-left:auto; width:19px; height:19px; border-radius:50%; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; flex:0 0 auto; position:relative; }
+.tree-edit::after{ content:''; position:absolute; right:-1px; bottom:-1px; width:7px; height:7px; border-radius:50%; background:var(--green-700); border:1.5px solid #fff; }
+.tree-row .fdot{ width:7px; height:7px; border-radius:50%; background:var(--green-700); flex:0 0 auto; margin-left:auto; margin-right:7px; }
+.tree-row.folder .fdot + .tc{ margin-left:0; }
 
 .app-mini-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; }
 .app-mini{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 6px; border:1px solid var(--gray-200); border-radius:var(--radius-m); cursor:pointer; text-decoration:none; background:#fff; }

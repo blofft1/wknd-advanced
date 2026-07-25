@@ -213,7 +213,7 @@ const localeChildren = (lang) => [
 ];
 const siteTree = [
   { name:'index', type:'page' },
-  { name:'about-us', type:'page' },
+  { name:'about-us', type:'page', editing:{ by:'K. Robin', initials:'KR', color:'c-blue' } },
   { name:'already-investing', type:'page' },
   { name:'articles', type:'folder', children:[
     { name:'trips-worth-taking', type:'page' },
@@ -222,7 +222,7 @@ const siteTree = [
     { name:'2026', type:'folder', children:[
       { name:'q1-recap', type:'page' },
       { name:'summer-guide', type:'page' },
-      { name:'fall-preview', type:'page' },
+      { name:'fall-preview', type:'page', editing:{ by:'you', initials:'B', color:'c-green' } },
     ] },
   ] },
   { name:'events', type:'page' },
@@ -231,7 +231,7 @@ const siteTree = [
   { name:'es', type:'folder', children: localeChildren('es') },
   { name:'fragments', type:'folder', children:[
     { name:'related-articles', type:'page' },
-    { name:'hero-banner', type:'page' },
+    { name:'hero-banner', type:'page', editing:{ by:'K. Robin', initials:'KR', color:'c-blue' } },
     { name:'cta-newsletter', type:'page' },
   ] },
   { name:'config', type:'folder', children:[
@@ -240,16 +240,21 @@ const siteTree = [
     { name:'site-config', type:'page' },
   ] },
 ];
+function hasEditingDescendant(node){
+  return (node.children || []).some((c) => c.editing || (c.type === 'folder' && hasEditingDescendant(c)));
+}
 function renderTree(nodes, depth){
   return `<div class="tree-group"${depth > 0 ? ' style="display:none"' : ''}>` + nodes.map((n) => {
     const pad = 10 + depth * 16;
     if(n.type === 'folder'){
+      const dot = hasEditingDescendant(n) ? '<span class="fdot" title="Contains pages being edited"></span>' : '';
       return `<div class="tree-node">
-        <div class="tree-row folder" data-folder="1" style="padding-left:${pad}px"><span class="tw">▸</span><span class="ti">📁</span><span class="tn">${n.name}</span><span class="tc">${n.children.length}</span></div>
+        <div class="tree-row folder" data-folder="1" style="padding-left:${pad}px"><span class="tw">▸</span><span class="ti">📁</span><span class="tn">${n.name}</span>${dot}<span class="tc">${n.children.length}</span></div>
         ${renderTree(n.children, depth + 1)}
       </div>`;
     }
-    return `<div class="tree-row page" data-page="${n.name}" style="padding-left:${pad}px"><span class="tw"></span><span class="ti">📄</span><span class="tn">${n.name}</span></div>`;
+    const edit = n.editing ? `<span class="tree-edit ${n.editing.color}" title="Being edited by ${n.editing.by}">${n.editing.initials}</span>` : '';
+    return `<div class="tree-row page${n.editing ? ' editing' : ''}" data-page="${n.name}" style="padding-left:${pad}px"><span class="tw"></span><span class="ti">📄</span><span class="tn">${n.name}</span>${edit}</div>`;
   }).join('') + `</div>`;
 }
 const mtree = document.getElementById('mtree');
