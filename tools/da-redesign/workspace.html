@@ -1058,6 +1058,10 @@ selectPanel('files');
 renderCrumbs();
 render('all', '');
 setMode('site');
+
+// Deep-link: ?page=<name> opens that page straight into Experience Workspace (Layout mode)
+const _deepPage = new URLSearchParams(location.search).get('page');
+if(_deepPage){ loadEwsPage(_deepPage, _deepPage); setMode('layout'); }
 </script>
 </body>
 </html>

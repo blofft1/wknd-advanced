@@ -711,6 +711,13 @@ body.mode-editor .anno-toggle, body.mode-editor .anno-legend, body.mode-editor .
 .mtree-row:hover{ background:var(--blue-100); }
 .mtree-row .mt-ic{ width:16px; text-align:center; color:var(--gray-500); }
 .mtree-row .mt-count{ margin-left:auto; font-size:11px; color:var(--gray-500); background:var(--gray-100); border-radius:var(--radius-pill); padding:1px 9px; }
+.tree-row{ display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:var(--radius-s); font-size:13px; cursor:pointer; color:var(--gray-800); }
+.tree-row:hover{ background:var(--blue-100); }
+.tree-row .tw{ width:12px; text-align:center; color:var(--gray-500); font-size:9px; flex:0 0 auto; }
+.tree-row .ti{ width:16px; text-align:center; flex:0 0 auto; }
+.tree-row .tn{ flex:1; min-width:0; }
+.tree-row.folder .tn{ font-weight:600; }
+.tree-row .tc{ font-size:11px; color:var(--gray-500); background:var(--gray-100); border-radius:var(--radius-pill); padding:1px 9px; flex:0 0 auto; }
 
 .app-mini-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; }
 .app-mini{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 6px; border:1px solid var(--gray-200); border-radius:var(--radius-m); cursor:pointer; text-decoration:none; background:#fff; }

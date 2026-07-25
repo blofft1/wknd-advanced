@@ -201,15 +201,71 @@ findInput.addEventListener('input', renderFind);
 findInput.addEventListener('focus', renderFind);
 document.addEventListener('click', (e) => { if(!document.querySelector('.find').contains(e.target)) findResults.classList.remove('open'); });
 
-/* ---------- Site structure quick view ---------- */
-const mtreeData = [
-  { n:'index', ic:'📄' }, { n:'about-us', ic:'📄' }, { n:'articles', ic:'📁', c:12 },
-  { n:'events', ic:'📄' }, { n:'en', ic:'📁', c:9 }, { n:'de', ic:'📁', c:9 },
-  { n:'es', ic:'📁', c:9 }, { n:'fragments', ic:'📁', c:7 }, { n:'config', ic:'📁', c:3 },
+/* ---------- Site structure tree (folders expand; pages open Experience Workspace) ---------- */
+const localeChildren = (lang) => [
+  { name:'index', type:'page' },
+  { name:'about-us', type:'page' },
+  { name:'articles', type:'folder', children:[
+    { name:'trips-worth-taking', type:'page' },
+    { name:'weekend-escapes', type:'page' },
+  ] },
+  { name:'events', type:'page' },
 ];
-document.getElementById('mtree').innerHTML = mtreeData.map((r) =>
-  `<a class="mtree-row" href="workspace.html"><span class="mt-ic">${r.ic}</span>${r.n}${r.c ? `<span class="mt-count">${r.c}</span>` : ''}</a>`
-).join('');
+const siteTree = [
+  { name:'index', type:'page' },
+  { name:'about-us', type:'page' },
+  { name:'already-investing', type:'page' },
+  { name:'articles', type:'folder', children:[
+    { name:'trips-worth-taking', type:'page' },
+    { name:'weekend-escapes', type:'page' },
+    { name:'gear-guide', type:'page' },
+    { name:'2026', type:'folder', children:[
+      { name:'q1-recap', type:'page' },
+      { name:'summer-guide', type:'page' },
+      { name:'fall-preview', type:'page' },
+    ] },
+  ] },
+  { name:'events', type:'page' },
+  { name:'en', type:'folder', children: localeChildren('en') },
+  { name:'de', type:'folder', children: localeChildren('de') },
+  { name:'es', type:'folder', children: localeChildren('es') },
+  { name:'fragments', type:'folder', children:[
+    { name:'related-articles', type:'page' },
+    { name:'hero-banner', type:'page' },
+    { name:'cta-newsletter', type:'page' },
+  ] },
+  { name:'config', type:'folder', children:[
+    { name:'nav', type:'page' },
+    { name:'footer', type:'page' },
+    { name:'site-config', type:'page' },
+  ] },
+];
+function renderTree(nodes, depth){
+  return `<div class="tree-group"${depth > 0 ? ' style="display:none"' : ''}>` + nodes.map((n) => {
+    const pad = 10 + depth * 16;
+    if(n.type === 'folder'){
+      return `<div class="tree-node">
+        <div class="tree-row folder" data-folder="1" style="padding-left:${pad}px"><span class="tw">▸</span><span class="ti">📁</span><span class="tn">${n.name}</span><span class="tc">${n.children.length}</span></div>
+        ${renderTree(n.children, depth + 1)}
+      </div>`;
+    }
+    return `<div class="tree-row page" data-page="${n.name}" style="padding-left:${pad}px"><span class="tw"></span><span class="ti">📄</span><span class="tn">${n.name}</span></div>`;
+  }).join('') + `</div>`;
+}
+const mtree = document.getElementById('mtree');
+mtree.innerHTML = renderTree(siteTree, 0);
+mtree.addEventListener('click', (e) => {
+  const folderRow = e.target.closest('.tree-row.folder');
+  if(folderRow){
+    const group = folderRow.parentElement.querySelector(':scope > .tree-group');
+    const open = group.style.display !== 'none';
+    group.style.display = open ? 'none' : 'block';
+    folderRow.querySelector('.tw').textContent = open ? '▸' : '▾';
+    return;
+  }
+  const pageRow = e.target.closest('.tree-row.page');
+  if(pageRow){ window.location.href = 'workspace.html?page=' + encodeURIComponent(pageRow.dataset.page); }
+});
 
 /* ---------- Latest updates ---------- */
 const activity = [
