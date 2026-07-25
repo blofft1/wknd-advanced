@@ -660,7 +660,7 @@ body.mode-editor .anno-toggle, body.mode-editor .anno-legend, body.mode-editor .
 .c-green{ background:var(--green-100); color:var(--green-700); }
 .c-gray{ background:var(--gray-200); color:var(--gray-700); }
 
-.dash{ max-width:1160px; margin:0 auto; padding:28px 28px 64px; }
+.dash{ max-width:1600px; margin:0 auto; padding:28px 32px 64px; }
 .site-hero{ display:grid; grid-template-columns:1fr 300px; gap:24px; align-items:center; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius-l); padding:24px 26px; margin-bottom:18px; }
 .site-hero .eyebrow{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--gray-500); margin-bottom:6px; }
 .site-hero h1{ font-size:28px; margin:0 0 8px; }
