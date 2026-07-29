@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WKND Advanced — Document Authoring</title>
 <base target="_blank">
-<link rel="stylesheet" href="/tools/da-redesign/styles.css?v=5">
+<link rel="stylesheet" href="/tools/da-redesign/styles.css?v=6">
 </head>
 <body>
 
@@ -23,7 +23,7 @@
 
   <div class="appsw-menu" id="appswMenu">
     <div class="appsw-label">Content</div>
-    <a class="appsw-item" href="/tools/da-redesign/workspace.html"><span class="si">🗂</span> Sites &amp; Content</a>
+    <a class="appsw-item" href="https://da.live/#/blofft1/wknd-advanced"><span class="si">🗂</span> Sites &amp; Content</a>
     <a class="appsw-item" href="/tools/da-redesign/fragments.html"><span class="si">🧩</span> Content Fragments</a>
     <a class="appsw-item" href="/tools/da-redesign/translation.html"><span class="si">🌐</span> Translation</a>
     <a class="appsw-item" href="/tools/da-redesign/aemcoder.html"><span class="si">✦</span> Import (AEM Coder)</a>
@@ -53,8 +53,8 @@
             <h1>WKND Advanced</h1>
             <div class="meta"><span class="status published"><span class="dot"></span>Published</span> · blofft1 / wknd-advanced · last published 2h ago</div>
             <div class="hero-actions">
-              <a class="btn primary" href="/tools/da-redesign/workspace.html">Open content</a>
-              <a class="btn" href="/tools/da-redesign/workspace.html">Preview live</a>
+              <a class="btn primary" href="https://da.live/canvas#/blofft1/wknd-advanced/index">Open content</a>
+              <a class="btn" href="https://main--wknd-advanced--blofft1.aem.live/">Preview live</a>
               <button class="btn" id="newPageBtn">+ New page</button>
             </div>
           </div>
@@ -74,7 +74,7 @@
         <div class="dash-grid">
           <div class="dash-col">
             <div class="card">
-              <div class="card-head"><h3>Site structure</h3><a href="/tools/da-redesign/workspace.html">Open in Content →</a></div>
+              <div class="card-head"><h3>Site structure</h3><a href="https://da.live/#/blofft1/wknd-advanced">Open in Content →</a></div>
               <div class="mtree" id="mtree"></div>
             </div>
             <div class="card">
@@ -121,7 +121,7 @@
             <div class="llmo-metric"><div class="n">18%</div><div class="l">Share of voice</div><div class="d">vs 4 competitors</div></div>
           </div>
           <div class="card">
-            <div class="card-head"><h3>Opportunities · readability &amp; structure</h3><a href="/tools/da-redesign/workspace.html">Fix in Content →</a></div>
+            <div class="card-head"><h3>Opportunities · readability &amp; structure</h3><a href="https://da.live/#/blofft1/wknd-advanced">Fix in Content →</a></div>
             <div id="llmoOps"></div>
           </div>
         </div>
@@ -194,7 +194,7 @@ function renderFind(){
   if(!q){ findResults.classList.remove('open'); return; }
   const hits = findIndex.filter((r) => r.t.toLowerCase().includes(q) || r.p.toLowerCase().includes(q)).slice(0, 7);
   findResults.innerHTML = hits.length
-    ? hits.map((r) => `<a class="find-row" href="/tools/da-redesign/workspace.html"><span class="fr-type ${r.c}">${r.ty}</span>${r.t}<span class="fr-path">${r.p}</span></a>`).join('')
+    ? hits.map((r) => `<a class="find-row" href="${CANVAS}${r.p}"><span class="fr-type ${r.c}">${r.ty}</span>${r.t}<span class="fr-path">${r.p}</span></a>`).join('')
     : '<div class="find-row" style="color:var(--gray-500);cursor:default;">No matches</div>';
   findResults.classList.add('open');
 }
@@ -244,22 +244,26 @@ const siteTree = [
 function hasEditingDescendant(node){
   return (node.children || []).some((c) => c.editing || (c.type === 'folder' && hasEditingDescendant(c)));
 }
-function renderTree(nodes, depth){
+// Real DA Experience Workspace (canvas) + content browser base URLs
+const CANVAS = 'https://da.live/canvas#/blofft1/wknd-advanced';
+const BROWSE = 'https://da.live/#/blofft1/wknd-advanced';
+function renderTree(nodes, depth, parent){
   return `<div class="tree-group"${depth > 0 ? ' style="display:none"' : ''}>` + nodes.map((n) => {
     const pad = 10 + depth * 16;
+    const path = (parent || '') + '/' + n.name;
     if(n.type === 'folder'){
       const dot = hasEditingDescendant(n) ? '<span class="fdot" title="Contains pages being edited"></span>' : '';
       return `<div class="tree-node">
         <div class="tree-row folder" data-folder="1" style="padding-left:${pad}px"><span class="tw">▸</span><span class="ti">📁</span><span class="tn">${n.name}</span>${dot}<span class="tc">${n.children.length}</span></div>
-        ${renderTree(n.children, depth + 1)}
+        ${renderTree(n.children, depth + 1, path)}
       </div>`;
     }
     const edit = n.editing ? `<span class="tree-edit ${n.editing.color}" title="Being edited by ${n.editing.by}">${n.editing.initials}</span>` : '';
-    return `<div class="tree-row page${n.editing ? ' editing' : ''}" data-page="${n.name}" style="padding-left:${pad}px"><span class="tw"></span><span class="ti">📄</span><span class="tn">${n.name}</span>${edit}</div>`;
+    return `<div class="tree-row page${n.editing ? ' editing' : ''}" data-path="${path}" style="padding-left:${pad}px"><span class="tw"></span><span class="ti">📄</span><span class="tn">${n.name}</span>${edit}</div>`;
   }).join('') + `</div>`;
 }
 const mtree = document.getElementById('mtree');
-mtree.innerHTML = renderTree(siteTree, 0);
+mtree.innerHTML = renderTree(siteTree, 0, '');
 mtree.addEventListener('click', (e) => {
   const folderRow = e.target.closest('.tree-row.folder');
   if(folderRow){
@@ -270,7 +274,7 @@ mtree.addEventListener('click', (e) => {
     return;
   }
   const pageRow = e.target.closest('.tree-row.page');
-  if(pageRow){ window.open('/tools/da-redesign/workspace.html?page=' + encodeURIComponent(pageRow.dataset.page), '_blank'); }
+  if(pageRow){ window.open(CANVAS + pageRow.dataset.path, '_blank'); }
 });
 
 /* ---------- Latest updates ---------- */
@@ -287,18 +291,18 @@ document.getElementById('activity').innerHTML = activity.map((a) =>
 
 /* ---------- My queue ---------- */
 const queue = [
-  { ic:'⏳', c:'c-purple', t:'Trips Worth Taking — Extras', s:'Awaiting your review', btn:'Review', prim:true },
-  { ic:'✎', c:'c-blue', t:'Fall Preview', s:'Draft you started', btn:'Resume' },
-  { ic:'🌐', c:'c-teal', t:'German (de) rollout', s:'Translation ready to approve', btn:'Approve' },
+  { ic:'⏳', c:'c-purple', t:'Trips Worth Taking — Extras', s:'Awaiting your review', btn:'Review', prim:true, path:'/extras' },
+  { ic:'✎', c:'c-blue', t:'Fall Preview', s:'Draft you started', btn:'Resume', path:'/articles/2026/fall-preview' },
+  { ic:'🌐', c:'c-teal', t:'German (de) rollout', s:'Translation ready to approve', btn:'Approve', path:'/de/index' },
 ];
 document.getElementById('queue').innerHTML = queue.map((q) =>
   `<div class="q-row"><div class="q-ic ${q.c}">${q.ic}</div><div class="q-main"><div class="qt">${q.t}</div><div class="qs">${q.s}</div></div><button class="q-btn ${q.prim ? 'primary' : ''}">${q.btn}</button></div>`
 ).join('');
-document.querySelectorAll('#queue .q-btn').forEach((b, i) => b.addEventListener('click', () => { window.open('workspace.html', '_blank'); }));
+document.querySelectorAll('#queue .q-btn').forEach((b, i) => b.addEventListener('click', () => { window.open(CANVAS + queue[i].path, '_blank'); }));
 
 /* ---------- Apps (compact) ---------- */
 const appMini = [
-  { l:'Content', ic:'🗂', c:'c-blue', href:'workspace.html' },
+  { l:'Content', ic:'🗂', c:'c-blue', href:BROWSE },
   { l:'Fragments', ic:'🧩', c:'c-purple', href:'fragments.html' },
   { l:'Translation', ic:'🌐', c:'c-teal', href:'translation.html' },
   { l:'MSM', ic:'🔗', c:'c-blue', href:'msm.html' },
@@ -337,7 +341,10 @@ document.getElementById('llmoOps').innerHTML = llmoOps.map((o) => `
     </div>
     <span class="op-lift ${o.impact}">${o.impact} impact</span>
   </div>`).join('');
-document.querySelectorAll('#llmoOps .op-row').forEach((r) => r.addEventListener('click', () => { window.open('workspace.html', '_blank'); }));
+document.querySelectorAll('#llmoOps .op-row').forEach((r, i) => r.addEventListener('click', () => {
+  const p = llmoOps[i].page;
+  window.open(p && p.startsWith('/') ? CANVAS + p : BROWSE, '_blank');
+}));
 </script>
 </body>
 </html>
