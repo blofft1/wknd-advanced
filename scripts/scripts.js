@@ -29,6 +29,11 @@ import dynamicBlocks from '../blocks/dynamic/index.js';
 const AUDIENCES = {
   mobile: () => window.innerWidth < 600,
   desktop: () => window.innerWidth >= 600,
+  'returning-visitor': () => {
+    const seen = localStorage.getItem('has-visited');
+    localStorage.setItem('has-visited', 'true');
+    return !!seen;
+  },
 };
 
 function getExperimentationContext() {
