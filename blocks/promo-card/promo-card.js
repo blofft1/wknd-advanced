@@ -60,7 +60,13 @@ function buildCard(d) {
 
   if (d.image) {
     const imageDiv = createTag('div', { class: 'promo-card-image' });
-    imageDiv.append(createOptimizedPicture(d.image, d.imageAlt || d.title, false, [{ width: '750' }]));
+    const external = /^https?:\/\//i.test(d.image) && !d.image.includes(window.location.host);
+    if (external) {
+      // External URLs can't be run through AEM's optimizer — use a plain img.
+      imageDiv.append(createTag('img', { src: d.image, alt: d.imageAlt || d.title, loading: 'lazy' }));
+    } else {
+      imageDiv.append(createOptimizedPicture(d.image, d.imageAlt || d.title, false, [{ width: '750' }]));
+    }
     link.append(imageDiv);
   }
 
