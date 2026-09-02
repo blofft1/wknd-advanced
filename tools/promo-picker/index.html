@@ -227,14 +227,10 @@
     // ---- Edit: load the structured-content form in the main content window ----
     function openForm(path) {
       const formUrl = `https://da.live/form#/${org}/${repo}${path}`;
-      if (actions?.setHref) {
-        // Ask DA to navigate the main content window to the form editor.
-        actions.setHref(formUrl);
-        actions.closeLibrary?.();
-      } else {
-        // Standalone / fallback: open the form editor in a new tab.
-        window.open(formUrl, '_blank', 'noopener');
-      }
+      // Open the form editor in a new tab so the picker (right rail) stays put.
+      const win = window.open(formUrl, '_blank', 'noopener');
+      // If the sandboxed iframe blocks popups, fall back to in-window navigation.
+      if (!win && actions?.setHref) actions.setHref(formUrl);
     }
 
     // ---- Insert a promo-card block referencing the selected docs ----
