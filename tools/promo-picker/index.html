@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Structured Content Picker</title>
+  <style>
+    :root {
+      --blue: #1473e6;
+      --blue-dark: #0d66d0;
+      --ink: #2c2c2c;
+      --muted: #6e6e6e;
+      --line: #e1e1e1;
+      --bg: #fff;
+      --chip: #f4f5f7;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: adobe-clean, -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      font-size: 14px;
+    }
+    header { padding: 16px 16px 10px; border-bottom: 1px solid var(--line); }
+    header h1 { font-size: 15px; margin: 0 0 2px; font-weight: 700; }
+    header p { margin: 0; color: var(--muted); font-size: 12px; }
+    .controls { display: flex; gap: 8px; padding: 12px 16px; position: sticky; top: 0; background: var(--bg); z-index: 2; }
+    .search { flex: 1; position: relative; }
+    .search input {
+      width: 100%; padding: 8px 12px 8px 32px; border: 1px solid var(--line);
+      border-radius: 8px; font: inherit; outline: none;
+    }
+    .search input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgb(20 115 230 / 20%); }
+    .search svg { position: absolute; left: 9px; top: 9px; width: 16px; height: 16px; fill: var(--muted); }
+    select { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font: inherit; background: var(--bg); }
+    .grid { padding: 4px 16px 88px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .card {
+      border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; cursor: pointer;
+      background: var(--bg); transition: border-color .15s, box-shadow .15s, transform .15s; position: relative;
+    }
+    .card:hover { border-color: var(--blue); box-shadow: 0 4px 14px rgb(0 0 0 / 8%); transform: translateY(-2px); }
+    .card.selected { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
+    .card .thumb { aspect-ratio: 16 / 10; background: var(--chip) center/cover no-repeat; display: block; }
+    .card .thumb.empty { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 11px; }
+    .card .meta { padding: 8px 10px 10px; }
+    .card .title { font-weight: 700; font-size: 13px; margin: 0 0 3px; line-height: 1.25; }
+    .card .desc { color: var(--muted); font-size: 11.5px; line-height: 1.4; margin: 0 0 6px;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card .schema { display: inline-block; font-size: 10px; letter-spacing: .3px; text-transform: uppercase;
+      color: var(--blue-dark); background: rgb(20 115 230 / 10%); padding: 2px 6px; border-radius: 4px; }
+    .card .row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
+    .edit-btn {
+      border: 1px solid var(--line); background: var(--bg); color: var(--blue-dark);
+      font: inherit; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 6px; cursor: pointer;
+      white-space: nowrap;
+    }
+    .edit-btn:hover { border-color: var(--blue); background: rgb(20 115 230 / 8%); }
+    .check { position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%;
+      background: var(--blue); color: #fff; display: none; align-items: center; justify-content: center; font-size: 12px; }
+    .card.selected .check { display: flex; }
+    .footer {
+      position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; background: var(--bg);
+      border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .footer .count { color: var(--muted); font-size: 12px; }
+    button.insert {
+      background: var(--blue); color: #fff; border: none; border-radius: 8px; padding: 9px 16px;
+      font: inherit; font-weight: 700; cursor: pointer;
+    }
+    button.insert:hover { background: var(--blue-dark); }
+    button.insert:disabled { background: #c9c9c9; cursor: not-allowed; }
+    .empty-state { padding: 40px 16px; text-align: center; color: var(--muted); }
+    .badge-env { font-size: 10px; color: var(--muted); padding: 12px 16px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Structured Content</h1>
+    <p>Search, preview and insert a Promo Card block.</p>
+  </header>
+
+  <div class="controls">
+    <label class="search">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 5 1.5-1.5-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+      <input id="q" type="search" placeholder="Search title or description…" autocomplete="off" />
+    </label>
+    <select id="schema"><option value="">All schemas</option></select>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <div class="footer">
+    <span class="count" id="count">0 selected</span>
+    <button class="insert" id="insert" disabled>Insert</button>
+  </div>
+
+  <script type="module">
+    // ---- DA_SDK (only present when running inside Document Authoring) ----
+    // Resolves to { org, repo, path, token, actions, ... } — context is spread at the top level.
+    let actions = null;
+    let org = 'blofft1';
+    let repo = 'wknd-advanced';
+    try {
+      const sdkPromise = import('https://da.live/nx/utils/sdk.js').then((m) => m.default);
+      const sdk = await Promise.race([sdkPromise, new Promise((r) => setTimeout(() => r(null), 1500))]);
+      if (sdk) { actions = sdk.actions; org = sdk.org || org; repo = sdk.repo || repo; }
+    } catch (e) { /* standalone / preview mode */ }
+    const inDA = !!actions;
+
+    // ---- Sample data (used standalone; replaced by live fetch inside DA) ----
+    const MOCK = [
+      { path: '/promos/fjords-of-norway', schema: 'promo-card', title: 'Fjords of Norway',
+        description: 'Cruise past cliffs that fall straight into impossibly still water.',
+        image: 'https://images.unsplash.com/photo-1601439678777-b2b3c56fa627?w=600&q=80' },
+      { path: '/promos/streets-of-lisbon', schema: 'promo-card', title: 'Streets of Lisbon',
+        description: 'Yellow trams, tiled facades, and the best custard tart of your life.',
+        image: 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=600&q=80' },
+      { path: '/promos/surfing-san-diego', schema: 'promo-card', title: 'Surfing in San Diego',
+        description: 'Dawn patrol at the break, wetsuit still cold from yesterday.',
+        image: 'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=600&q=80' },
+      { path: '/offers/summer-highline-promo', schema: 'highline-offer', title: 'Highline Offer',
+        description: 'This is our latest offer.', image: '' },
+    ];
+
+    // ---- Load structured content: list the folders, then fetch each doc's JSON ----
+    // Uses the SDK's authenticated daFetch to list, and the public da-sc endpoint for
+    // each document's data. Falls back to the sample set standalone or on error.
+    const FOLDERS = ['promos', 'offers'];
+
+    async function load() {
+      if (!inDA || !actions?.daFetch) return MOCK;
+      try {
+        const items = [];
+        for (const folder of FOLDERS) {
+          let entries = [];
+          try {
+            const res = await actions.daFetch(`https://admin.da.live/list/${org}/${repo}/${folder}`);
+            if (res.ok) {
+              const body = await res.json();
+              entries = Array.isArray(body) ? body : (body.data || []);
+            }
+          } catch { /* folder may not exist */ }
+
+          for (const e of entries) {
+            if (e.ext !== 'html' || !e.name || e.name.startsWith('.')) continue;
+            const path = `/${folder}/${e.name}`;
+            try {
+              const scRes = await fetch(`https://da-sc.adobeaem.workers.dev/preview/${org}/${repo}${path}`);
+              if (!scRes.ok) continue;
+              const json = await scRes.json();
+              const d = json.data || {};
+              items.push({
+                path,
+                schema: json.metadata?.schemaName || 'unknown',
+                title: d.title || d.offerName || e.name,
+                description: d.description || d.summary || '',
+                image: d.image || '',
+              });
+            } catch { /* skip unreadable doc */ }
+          }
+        }
+        return items.length ? items : MOCK;
+      } catch {
+        return MOCK;
+      }
+    }
+
+    const data = await load();
+    const selected = new Set();
+
+    // ---- Filters ----
+    const schemaSel = document.getElementById('schema');
+    [...new Set(data.map((d) => d.schema))].forEach((s) => {
+      const o = document.createElement('option'); o.value = s; o.textContent = s; schemaSel.append(o);
+    });
+
+    function render() {
+      const q = document.getElementById('q').value.trim().toLowerCase();
+      const schema = schemaSel.value;
+      const rows = data.filter((d) =>
+        (!schema || d.schema === schema)
+        && (!q || `${d.title} ${d.description} ${d.path}`.toLowerCase().includes(q)));
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      if (!rows.length) { grid.innerHTML = '<div class="empty-state">No structured content matches.</div>'; return; }
+      rows.forEach((d) => {
+        const card = document.createElement('div');
+        card.className = 'card' + (selected.has(d.path) ? ' selected' : '');
+        const thumb = d.image
+          ? `<span class="thumb" style="background-image:url('${d.image}')"></span>`
+          : '<span class="thumb empty">No image</span>';
+        card.innerHTML = `
+          <span class="check">✓</span>
+          ${thumb}
+          <div class="meta">
+            <p class="title">${d.title}</p>
+            <p class="desc">${d.description || ''}</p>
+            <div class="row">
+              <span class="schema">${d.schema}</span>
+              <button class="edit-btn" type="button" title="Edit in form editor">✎ Edit</button>
+            </div>
+          </div>`;
+        card.addEventListener('click', () => {
+          if (selected.has(d.path)) selected.delete(d.path); else selected.add(d.path);
+          update();
+        });
+        card.querySelector('.edit-btn').addEventListener('click', (ev) => {
+          ev.stopPropagation(); // don't toggle selection when hitting Edit
+          openForm(d.path);
+        });
+        grid.append(card);
+      });
+    }
+
+    function update() {
+      render();
+      const n = selected.size;
+      document.getElementById('count').textContent = `${n} selected`;
+      document.getElementById('insert').disabled = n === 0;
+    }
+
+    document.getElementById('q').addEventListener('input', render);
+    schemaSel.addEventListener('change', render);
+
+    // ---- Edit: load the structured-content form in the main content window ----
+    function openForm(path) {
+      const formUrl = `https://da.live/form#/${org}/${repo}${path}`;
+      if (actions?.setHref) {
+        // Ask DA to navigate the main content window to the form editor.
+        actions.setHref(formUrl);
+        actions.closeLibrary?.();
+      } else {
+        // Standalone / fallback: open the form editor in a new tab.
+        window.open(formUrl, '_blank', 'noopener');
+      }
+    }
+
+    // ---- Insert a promo-card block referencing the selected docs ----
+    document.getElementById('insert').addEventListener('click', () => {
+      const paths = [...selected];
+      const bodyRows = paths.map((p) => `<tr><td><a href="${p}">${p}</a></td></tr>`).join('');
+      const html = `<table><tr><td>promo-card</td></tr>${bodyRows}</table>`;
+      if (actions?.sendHTML) {
+        actions.sendHTML(html);
+        actions.closeLibrary?.();
+      } else {
+        // Standalone preview: show what would be inserted.
+        alert(`Would insert into the document:\n\n${html}`);
+      }
+    });
+
+    update();
+  </script>
+</body>
+</html>
