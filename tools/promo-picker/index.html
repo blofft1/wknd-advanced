@@ -132,43 +132,67 @@
         description: 'This is our latest offer.', image: '' },
     ];
 
-    // ---- Load structured content: list the folders, then fetch each doc's JSON ----
-    // Uses the SDK's authenticated daFetch to list, and the public da-sc endpoint for
-    // each document's data. Falls back to the sample set standalone or on error.
-    const FOLDERS = ['promos', 'offers'];
+    // ---- Load structured content from ANYWHERE on the site ----
+    // Recursively lists every document via the DA list API (authenticated daFetch),
+    // then probes each one's structured-content JSON and keeps the schema-driven ones.
+    // Falls back to the sample set standalone or on error.
+    const SKIP_FOLDERS = new Set(['media', 'icons', 'tools', 'drafts', '.da', '.git']);
+
+    async function listDocs() {
+      const docs = [];
+      async function walk(path) {
+        let entries;
+        try {
+          const res = await actions.daFetch(`https://admin.da.live/list/${org}/${repo}${path}`);
+          if (!res.ok) return;
+          entries = await res.json();
+        } catch { return; }
+        if (!Array.isArray(entries)) entries = entries.data || [];
+        const folders = [];
+        for (const e of entries) {
+          const rel = (e.path || '').replace(`/${org}/${repo}`, '');
+          if (e.ext === 'html') docs.push(rel.replace(/\.html$/, ''));
+          else if (!e.ext && e.name && !e.name.startsWith('.') && !SKIP_FOLDERS.has(e.name)) folders.push(rel);
+        }
+        await Promise.all(folders.map(walk));
+      }
+      await walk('');
+      return docs;
+    }
+
+    async function probeStructured(paths) {
+      const out = [];
+      let i = 0;
+      const worker = async () => {
+        while (i < paths.length) {
+          const path = paths[i++];
+          try {
+            const res = await fetch(`https://da-sc.adobeaem.workers.dev/preview/${org}/${repo}${path}`);
+            if (!res.ok) continue;
+            const json = await res.json();
+            const schema = json?.metadata?.schemaName;
+            if (!schema) continue; // regular page or empty form — not structured content
+            const d = json.data || {};
+            out.push({
+              path,
+              schema,
+              title: d.title || d.offerName || d.headline || path.split('/').pop(),
+              description: d.description || d.summary || d.body || '',
+              image: d.image || d.thumbnail || '',
+            });
+          } catch { /* skip */ }
+        }
+      };
+      await Promise.all(Array.from({ length: 10 }, worker)); // 10 concurrent probes
+      return out;
+    }
 
     async function load() {
       if (!inDA || !actions?.daFetch) return MOCK;
       try {
-        const items = [];
-        for (const folder of FOLDERS) {
-          let entries = [];
-          try {
-            const res = await actions.daFetch(`https://admin.da.live/list/${org}/${repo}/${folder}`);
-            if (res.ok) {
-              const body = await res.json();
-              entries = Array.isArray(body) ? body : (body.data || []);
-            }
-          } catch { /* folder may not exist */ }
-
-          for (const e of entries) {
-            if (e.ext !== 'html' || !e.name || e.name.startsWith('.')) continue;
-            const path = `/${folder}/${e.name}`;
-            try {
-              const scRes = await fetch(`https://da-sc.adobeaem.workers.dev/preview/${org}/${repo}${path}`);
-              if (!scRes.ok) continue;
-              const json = await scRes.json();
-              const d = json.data || {};
-              items.push({
-                path,
-                schema: json.metadata?.schemaName || 'unknown',
-                title: d.title || d.offerName || e.name,
-                description: d.description || d.summary || '',
-                image: d.image || '',
-              });
-            } catch { /* skip unreadable doc */ }
-          }
-        }
+        const docs = await listDocs();
+        const items = await probeStructured(docs);
+        items.sort((a, b) => a.title.localeCompare(b.title));
         return items.length ? items : MOCK;
       } catch {
         return MOCK;
