@@ -35,6 +35,11 @@
     .search input:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgb(20 115 230 / 20%); }
     .search svg { position: absolute; left: 9px; top: 9px; width: 16px; height: 16px; fill: var(--muted); }
     select { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font: inherit; background: var(--bg); }
+    .icon-btn { border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 0 11px; cursor: pointer; display: flex; align-items: center; }
+    .icon-btn:hover { border-color: var(--blue); }
+    .icon-btn svg { width: 18px; height: 18px; fill: var(--muted); }
+    .icon-btn.spinning svg { animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .grid { padding: 4px 16px 88px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
     .card {
       border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; cursor: pointer;
@@ -87,6 +92,9 @@
       <input id="q" type="search" placeholder="Search title or description…" autocomplete="off" />
     </label>
     <select id="schema"><option value="">All schemas</option></select>
+    <button id="refresh" class="icon-btn" title="Refresh list" type="button" aria-label="Refresh">
+      <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+    </button>
   </div>
 
   <div id="grid" class="grid"></div>
@@ -167,14 +175,29 @@
       }
     }
 
-    const data = await load();
+    let data = [];
     const selected = new Set();
-
-    // ---- Filters ----
     const schemaSel = document.getElementById('schema');
-    [...new Set(data.map((d) => d.schema))].forEach((s) => {
-      const o = document.createElement('option'); o.value = s; o.textContent = s; schemaSel.append(o);
-    });
+    const refreshBtn = document.getElementById('refresh');
+
+    // Populate the schema filter from the current data (preserving the current choice).
+    function buildSchemaOptions() {
+      const current = schemaSel.value;
+      schemaSel.innerHTML = '<option value="">All schemas</option>';
+      [...new Set(data.map((d) => d.schema))].forEach((s) => {
+        const o = document.createElement('option'); o.value = s; o.textContent = s; schemaSel.append(o);
+      });
+      if ([...schemaSel.options].some((o) => o.value === current)) schemaSel.value = current;
+    }
+
+    // Re-fetch structured content and re-render (runs on load and via the refresh button).
+    async function refresh() {
+      refreshBtn.classList.add('spinning');
+      try { data = await load(); } finally { refreshBtn.classList.remove('spinning'); }
+      buildSchemaOptions();
+      update();
+    }
+    refreshBtn.addEventListener('click', refresh);
 
     function render() {
       const q = document.getElementById('q').value.trim().toLowerCase();
@@ -247,7 +270,7 @@
       }
     });
 
-    update();
+    refresh();
   </script>
 </body>
 </html>
