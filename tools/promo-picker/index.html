@@ -77,6 +77,10 @@
     button.insert:hover { background: var(--blue-dark); }
     button.insert:disabled { background: #c9c9c9; cursor: not-allowed; }
     .empty-state { padding: 40px 16px; text-align: center; color: var(--muted); }
+    .toast { position: fixed; left: 16px; right: 16px; bottom: 64px; background: var(--ink); color: #fff;
+      padding: 10px 14px; border-radius: 8px; font-size: 12.5px; line-height: 1.4; z-index: 5;
+      opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: none; }
     .badge-env { font-size: 10px; color: var(--muted); padding: 12px 16px 0; }
   </style>
 </head>
@@ -272,12 +276,31 @@
     schemaSel.addEventListener('change', render);
 
     // ---- Edit: load the structured-content form in the main content window ----
+    function toast(msg) {
+      let el = document.getElementById('toast');
+      if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.append(el); }
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
     function openForm(path) {
       const formUrl = `https://da.live/form#/${org}/${repo}${path}`;
-      // Open the form editor in a new tab so the picker (right rail) stays put.
-      const win = window.open(formUrl, '_blank', 'noopener');
-      // If the sandboxed iframe blocks popups, fall back to in-window navigation.
-      if (!win && actions?.setHref) actions.setHref(formUrl);
+      // Open the form editor in a NEW TAB so the picker/right rail is never disturbed.
+      // Note: don't pass 'noopener' as a feature — it makes window.open return null even
+      // on success. We open, then sever opener manually. We never navigate the main
+      // window (that would clobber the page you're editing).
+      const win = window.open(formUrl, '_blank');
+      if (win) { try { win.opener = null; } catch { /* noop */ } return; }
+      // Genuinely blocked by the browser — copy the link instead of navigating.
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(formUrl)
+          .then(() => toast('Popups blocked — form link copied. Paste into a new tab to edit.'))
+          .catch(() => toast(`Open the form manually: ${formUrl}`));
+      } else {
+        toast(`Open the form manually: ${formUrl}`);
+      }
     }
 
     // ---- Insert a promo-card block referencing the selected docs ----
