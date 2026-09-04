@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Task Management</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; padding: 16px; font-size: 14px; line-height: 1.5;
+    }
+    h2 { margin: 0 0 4px; font-size: 15px; }
+    .muted { color: #6b6b6b; margin: 0 0 14px; word-break: break-word; }
+    .row { margin: 10px 0; }
+    .k { font-weight: 600; }
+    button {
+      width: 100%; padding: 10px 14px; border: 0; border-radius: 8px;
+      background: #1473e6; color: #fff; font-size: 14px; font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled { background: #b3b3b3; cursor: not-allowed; }
+    #status { margin-top: 12px; white-space: pre-wrap; }
+    .ok { color: #2d7d46; } .err { color: #c9252d; }
+    .card { border: 1px solid #e1e1e1; border-radius: 8px; padding: 12px; margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+  <h2>Task Management</h2>
+  <p class="muted" id="page">Loading&hellip;</p>
+
+  <div class="card" id="cfgcard">
+    <div class="row"><span class="k">Service:</span> <span id="svc">&mdash;</span></div>
+    <div class="row"><span class="k">Workfront:</span> <span id="wf">&mdash;</span></div>
+  </div>
+
+  <button id="request" disabled>Request Approval</button>
+  <p id="status"></p>
+
+  <script type="module">
+    import DA_SDK from 'https://da.live/nx/utils/sdk.js';
+
+    const $ = (id) => document.getElementById(id);
+    const setStatus = (msg, cls = '') => { const el = $('status'); el.textContent = msg; el.className = cls; };
+
+    let ctx = null;
+    const cfg = {};
+
+    // Read /config/placeholders.json from the site's own origin (same origin as this tool).
+    async function loadConfig() {
+      try {
+        const res = await fetch('/config/placeholders.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = await res.json();
+        (json.data || []).forEach((r) => { if (r && r.key) cfg[r.key] = r.value; });
+      } catch (e) { /* config not published yet */ }
+    }
+
+    async function init() {
+      try {
+        const sdk = await DA_SDK;             // { org, repo, path, token, actions, ... }
+        ctx = sdk;
+        $('page').textContent = `Page: ${sdk.path || '(unknown)'}`;
+      } catch (e) {
+        $('page').textContent = 'Open this from inside Document Authoring.';
+      }
+      await loadConfig();
+      $('svc').textContent = cfg['external-service-url']
+        ? cfg['external-service-url'].replace(/^(https?:\/\/[^/]+).*/, '$1/…') : 'NOT SET';
+      $('wf').textContent = cfg['workfront-instance-url'] || 'NOT SET';
+
+      if (ctx && cfg['external-service-url']) {
+        $('request').disabled = false;
+      } else if (!cfg['external-service-url']) {
+        setStatus('No "external-service-url" found in /config/placeholders. Publish that sheet, then reopen.', 'err');
+      }
+    }
+
+    async function requestApproval() {
+      $('request').disabled = true;
+      setStatus('Sending request to Workfront Fusion…');
+
+      const origin = window.location.origin;
+      const pagePath = ctx.path || '';
+      const payload = {
+        source: 'da-invoke-service',
+        org: ctx.org,
+        repo: ctx.repo,
+        path: pagePath,
+        pageUrl: `${origin}${pagePath}`,
+        editUrl: `https://da.live/edit#/${ctx.org}/${ctx.repo}${pagePath}`,
+        workfrontInstanceUrl: cfg['workfront-instance-url'] || '',
+        requestedAt: new Date().toISOString(),
+      };
+
+      const endpoint = cfg['external-service-url'];
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          setStatus('✅ Approval requested. Open Workfront to see the project/review task.', 'ok');
+        } else {
+          setStatus(`Service responded ${res.status}. Check the Fusion scenario.`, 'err');
+          $('request').disabled = false;
+        }
+      } catch (e) {
+        // Likely a CORS/opaque response — the webhook may not return CORS headers.
+        // Re-send fire-and-forget so the scenario still triggers, but we can't read the result.
+        try {
+          await fetch(endpoint, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          setStatus('Request sent to Fusion (response hidden by cross-origin). Check Workfront to confirm.', 'ok');
+        } catch (e2) {
+          setStatus(`Could not reach the service: ${e2.message}`, 'err');
+          $('request').disabled = false;
+        }
+      }
+    }
+
+    $('request').addEventListener('click', requestApproval);
+    init();
+  </script>
+</body>
+</html>
