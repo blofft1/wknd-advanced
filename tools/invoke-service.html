@@ -36,6 +36,7 @@
 
   <button id="request" disabled>Request Approval</button>
   <p id="status"></p>
+  <p class="muted" id="debug" style="font-size:11px;"></p>
 
   <script type="module">
     import DA_SDK from 'https://da.live/nx/utils/sdk.js';
@@ -43,8 +44,21 @@
     const $ = (id) => document.getElementById(id);
     const setStatus = (msg, cls = '') => { const el = $('status'); el.textContent = msg; el.className = cls; };
 
-    let ctx = null;
+    let ctx = null;   // normalized { org, repo, path, actions }
     const cfg = {};
+
+    // The DA SDK has shipped two shapes over time: context spread at the top level,
+    // and a nested { context: { org, repo, path } }. Support both.
+    function normalize(sdk) {
+      const c = (sdk && sdk.context) ? sdk.context : sdk;
+      return {
+        org: c.org || sdk.org || '',
+        repo: c.repo || sdk.repo || '',
+        path: c.path || sdk.path || '',
+        actions: sdk.actions,
+        raw: sdk,
+      };
+    }
 
     // Read /config/placeholders.json from the site's own origin (same origin as this tool).
     async function loadConfig() {
@@ -58,9 +72,15 @@
 
     async function init() {
       try {
-        const sdk = await DA_SDK;             // { org, repo, path, token, actions, ... }
-        ctx = sdk;
-        $('page').textContent = `Page: ${sdk.path || '(unknown)'}`;
+        const sdk = await DA_SDK;
+        ctx = normalize(sdk);
+        $('page').textContent = `Page: ${ctx.path || '(unknown)'}`;
+        if (!ctx.path) {
+          // Surface what the SDK actually returned so we can see where the path lives.
+          const keys = Object.keys(sdk || {}).join(', ');
+          const cKeys = sdk && sdk.context ? Object.keys(sdk.context).join(', ') : '(no .context)';
+          $('debug').textContent = `sdk keys: [${keys}] · context keys: [${cKeys}]`;
+        }
       } catch (e) {
         $('page').textContent = 'Open this from inside Document Authoring.';
       }
