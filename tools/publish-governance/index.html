@@ -22,15 +22,15 @@
       }
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--ink);
-      font: 13px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     .wrap { max-width: 380px; margin: 0 auto; }
     .card { background: var(--panel); border: .5px solid var(--line); border-radius: 12px; overflow: hidden; }
     .hd { padding: 12px 14px; border-bottom: .5px solid var(--line); }
     .hd-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
     .hd-title i { font-size: 18px; color: var(--accent); }
+    .hd-title .conn { margin-left: auto; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 20px; }
+    .conn.live { background: var(--ok-bg); color: var(--ok); }
+    .conn.demo { background: var(--line); color: var(--muted); }
     .hd-row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 8px; }
     .path { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--muted); word-break: break-all; }
     .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
@@ -38,32 +38,24 @@
     .badge.pending { background: var(--warn-bg); color: var(--warn); }
     .badge.published { background: var(--ok-bg); color: var(--ok); }
     .sec { padding: 12px 14px; border-top: .5px solid var(--line); }
-    .sec:first-of-type { border-top: none; }
     .sec-hd { display: flex; align-items: center; gap: 6px; font-weight: 600; }
     .sec-hd i { font-size: 16px; color: var(--muted); }
     .sec-hd .primary-dot { margin-left: auto; font-size: 10px; color: var(--accent); }
     .help { margin: 4px 0 10px; color: var(--hint); font-size: 12px; }
     .row { display: flex; gap: 8px; }
-    button {
-      flex: 1; padding: 8px 10px; border: .5px solid var(--line-strong); border-radius: var(--radius);
-      background: transparent; color: var(--ink); font-size: 13px; font-weight: 500; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit;
-    }
+    button { flex: 1; padding: 8px 10px; border: .5px solid var(--line-strong); border-radius: var(--radius); background: transparent; color: var(--ink); font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
     button:hover { background: rgba(127,127,127,.08); }
+    button:disabled { opacity: .5; cursor: default; }
     button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
     button.ok { background: var(--ok); border-color: var(--ok); color: #fff; }
     button i { font-size: 14px; }
-    a.link { color: var(--accent); text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
+    a.link { color: var(--accent); text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
     a.link i { font-size: 14px; }
-    textarea {
-      width: 100%; margin: 0 0 8px; padding: 8px; border: .5px solid var(--line-strong);
-      border-radius: var(--radius); background: var(--bg); color: var(--ink); font-family: inherit;
-      font-size: 13px; resize: vertical; min-height: 54px;
-    }
+    textarea { width: 100%; margin: 0 0 8px; padding: 8px; border: .5px solid var(--line-strong); border-radius: var(--radius); background: var(--bg); color: var(--ink); font-family: inherit; font-size: 13px; resize: vertical; min-height: 54px; }
     .approval { margin: 12px 14px; border: .5px solid var(--warn-line); background: var(--warn-bg); border-radius: 12px; padding: 12px; }
     .approval .a-hd { display: flex; align-items: center; gap: 6px; color: var(--warn); font-weight: 600; margin-bottom: 6px; }
     .approval p { margin: 0 0 4px; }
-    .approval .snap { font-size: 11px; color: var(--muted); margin: 6px 0 10px; display: flex; align-items: center; gap: 5px; }
+    .approval .snap { font-size: 11px; color: var(--muted); margin: 6px 0 10px; display: flex; align-items: center; gap: 5px; word-break: break-all; }
     .kv { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
     .kv b { color: var(--ink); font-weight: 500; }
     .dep { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border: .5px solid var(--line); border-radius: var(--radius); margin-bottom: 6px; }
@@ -74,21 +66,18 @@
     .ft span { font-size: 11px; color: var(--hint); }
     .hidden { display: none !important; }
     .dim { opacity: .5; }
-    /* demo switcher */
-    .demo { margin: 0 0 10px; padding: 8px 10px; border: .5px dashed var(--line-strong); border-radius: var(--radius); font-size: 12px; }
-    .demo label { color: var(--muted); margin-right: 6px; }
+    .demo { margin: 0 0 10px; padding: 8px 10px; border: .5px dashed var(--line-strong); border-radius: var(--radius); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+    .demo label { color: var(--muted); }
     .demo select { font: inherit; padding: 3px 6px; border-radius: 6px; border: .5px solid var(--line-strong); background: var(--bg); color: var(--ink); }
-    .toast {
-      position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
-      background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 20px;
-      font-size: 12px; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: 90%;
-    }
-    .toast.show { opacity: .95; }
+    .toast { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 20px; font-size: 12px; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: 92%; text-align: center; }
+    .toast.show { opacity: .96; }
+    .toast.err { background: var(--danger); color: #fff; }
+    .busy { pointer-events: none; opacity: .6; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="demo">
+  <div class="wrap" id="app">
+    <div class="demo hidden" id="demoBar">
       <label for="demoState">Preview state (demo)</label>
       <select id="demoState">
         <option value="author-draft">Author · draft</option>
@@ -100,27 +89,25 @@
 
     <div class="card">
       <div class="hd">
-        <div class="hd-title"><i class="ti ti-shield-check" aria-hidden="true"></i> Publishing and governance</div>
+        <div class="hd-title"><i class="ti ti-shield-check" aria-hidden="true"></i> Publishing and governance <span class="conn demo" id="conn">Demo</span></div>
         <div class="hd-row">
           <span class="path" id="pagePath">/products/rates-disclosure</span>
           <span class="badge pending" id="stateBadge">Pending review</span>
         </div>
       </div>
 
-      <!-- Dynamic approval bar (approver + pending) -->
       <div class="approval hidden" id="approvalBar">
         <div class="a-hd"><i class="ti ti-flag" aria-hidden="true"></i> Awaiting your approval</div>
         <p id="reqBy">Requested by Bill Lofft · 2h ago</p>
         <p style="color: var(--muted);" id="reqNote">"Updated Q3 rate figures per compliance."</p>
-        <div class="snap"><i class="ti ti-camera" aria-hidden="true"></i> <span id="snapName">Snapshot rp-rates-disclosure-20260904</span></div>
+        <div class="snap"><i class="ti ti-camera" aria-hidden="true"></i> <span id="snapName">rp-rates-disclosure-20260904</span></div>
         <div class="row">
           <button class="ok" data-act="approve"><i class="ti ti-check" aria-hidden="true"></i> Approve and publish</button>
           <button data-act="sendback"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> Send back</button>
         </div>
-        <a class="link" data-act="diff" href="#" style="margin-top: 8px;"><i class="ti ti-git-compare" aria-hidden="true"></i> View diff</a>
+        <a class="link" data-act="review" style="margin-top: 8px;"><i class="ti ti-external-link" aria-hidden="true"></i> Open review environment</a>
       </div>
 
-      <!-- Preview -->
       <div class="sec">
         <div class="sec-hd"><i class="ti ti-eye" aria-hidden="true"></i> Preview</div>
         <p class="help">See your draft before requesting approval.</p>
@@ -130,7 +117,6 @@
         </div>
       </div>
 
-      <!-- Request approval (author) -->
       <div class="sec" id="requestSec">
         <div class="sec-hd"><i class="ti ti-send" aria-hidden="true"></i> Request approval <span class="primary-dot" id="reqPrimary"></span></div>
         <p class="help">Publishing requires approval. This captures an immutable snapshot for the record. No direct publish.</p>
@@ -141,18 +127,16 @@
         </div>
         <div id="requestPending" class="hidden">
           <div class="kv"><i class="ti ti-clock" aria-hidden="true" style="vertical-align:-2px;"></i> Pending with <b id="approverName2">compliance@adobe.com</b></div>
-          <div class="row"><button data-act="withdraw"><i class="ti ti-x" aria-hidden="true"></i> Withdraw</button><button data-act="resend"><i class="ti ti-refresh" aria-hidden="true"></i> Resend</button></div>
+          <div class="row"><button data-act="withdraw"><i class="ti ti-x" aria-hidden="true"></i> Withdraw</button></div>
         </div>
       </div>
 
-      <!-- Rollout -->
       <div class="sec">
         <div class="sec-hd"><i class="ti ti-world" aria-hidden="true"></i> Multi-site rollout</div>
         <p class="help">Push this master to its market copies.</p>
         <div class="row"><button data-act="rollout">Open rollout manager <i class="ti ti-external-link" aria-hidden="true"></i></button></div>
       </div>
 
-      <!-- Translations & dependencies -->
       <div class="sec">
         <div class="sec-hd"><i class="ti ti-language" aria-hidden="true"></i> Translations and dependencies</div>
         <p class="help">Locale copies linked to this page.</p>
@@ -161,11 +145,11 @@
           <div class="dep"><span class="loc">/de</span><span class="st stale"><i class="ti ti-clock" aria-hidden="true"></i> Out of date</span></div>
           <div class="dep"><span class="loc">/es</span><span class="st none"><i class="ti ti-minus" aria-hidden="true"></i> Not translated</span></div>
         </div>
-        <a class="link" data-act="translate" href="#"><i class="ti ti-arrow-right" aria-hidden="true"></i> Manage translations</a>
+        <a class="link" data-act="translate"><i class="ti ti-arrow-right" aria-hidden="true"></i> Manage translations</a>
       </div>
 
       <div class="ft">
-        <a class="link" data-act="history" href="#"><i class="ti ti-history" aria-hidden="true"></i> Approval history</a>
+        <a class="link" data-act="refresh"><i class="ti ti-refresh" aria-hidden="true"></i> Refresh</a>
         <span id="lastPub">Last published 3d ago</span>
       </div>
     </div>
@@ -174,9 +158,12 @@
   <div class="toast" id="toast"></div>
 
   <script type="module">
-    // Phase 1: UI shell. DA context is read if present; all actions are stubs that
-    // will be wired to the snapshot admin API + approver routing in Phase 2.
-    let ctx = { org: 'blofft1', repo: 'wknd-advanced', path: '/products/rates-disclosure' };
+    const $ = (id) => document.getElementById(id);
+    const ADMIN = 'https://admin.hlx.page';
+
+    const ctx = { org: 'blofft1', repo: 'wknd-advanced', path: '/products/rates-disclosure', token: null, email: '' };
+    let live = false;
+    let current = null; // live state: { status, snapshot, requestedBy, note }
 
     async function initSDK() {
       try {
@@ -186,63 +173,196 @@
         ]);
         const sdk = await mod;
         const c = (sdk && sdk.context) ? sdk.context : sdk;
-        ctx = { org: c.org || ctx.org, repo: c.repo || ctx.repo, path: c.path || ctx.path };
-      } catch (e) { /* standalone preview — keep mock ctx */ }
-      document.getElementById('pagePath').textContent = ctx.path;
+        ctx.org = c.org || ctx.org; ctx.repo = c.repo || ctx.repo; ctx.path = c.path || ctx.path;
+        ctx.token = sdk.token || (c && c.token) || null;
+        ctx.email = (sdk.user && sdk.user.email) || (c && c.email) || '';
+      } catch (e) { /* standalone */ }
+      live = !!ctx.token;
+      $('pagePath').textContent = ctx.path;
+      $('conn').textContent = live ? 'Live' : 'Demo';
+      $('conn').className = 'conn ' + (live ? 'live' : 'demo');
+      $('demoBar').classList.toggle('hidden', live);
     }
 
-    const $ = (id) => document.getElementById(id);
     let toastT;
-    function toast(msg) {
-      const t = $('toast'); t.textContent = msg; t.classList.add('show');
-      clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200);
+    function toast(msg, isErr) {
+      const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (isErr ? ' err' : '');
+      clearTimeout(toastT); toastT = setTimeout(() => { t.className = 'toast'; }, isErr ? 5000 : 2600);
     }
 
-    const previewUrl = () => `https://main--${ctx.repo}--${ctx.org}.aem.page${ctx.path}`;
+    const host = (env) => `https://main--${ctx.repo}--${ctx.org}.${env}`;
+    const previewUrl = () => host('aem.page') + ctx.path;
+    const slug = () => ctx.path.replace(/^\//, '').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'home';
+    const stamp = () => new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
 
-    // Render the panel face for a given demo state.
+    // Authenticated admin call. Tries token header + cookies.
+    async function adminFetch(path, opts = {}) {
+      const headers = { ...(opts.headers || {}) };
+      if (ctx.token) headers.Authorization = `token ${ctx.token}`;
+      const res = await fetch(`${ADMIN}${path}`, { ...opts, headers, credentials: 'include' });
+      return res;
+    }
+
+    async function listSnapshots() {
+      const res = await adminFetch(`/snapshot/${ctx.org}/${ctx.repo}/main`);
+      if (!res.ok) throw new Error(`list ${res.status}`);
+      const json = await res.json();
+      return json.snapshots || [];
+    }
+    async function getManifest(name) {
+      const res = await adminFetch(`/snapshot/${ctx.org}/${ctx.repo}/main/${name}`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.manifest || json;
+    }
+
+    // Find the newest pending (locked) request snapshot for this page.
+    async function detect() {
+      const prefix = `rp-${slug()}-`;
+      const names = (await listSnapshots()).filter((n) => n.startsWith(prefix)).sort().reverse();
+      for (const name of names) {
+        const m = await getManifest(name); // eslint-disable-line no-await-in-loop
+        if (m && m.locked) {
+          return { status: 'pending', snapshot: name, requestedBy: m.metadata?.requestedBy || 'author', note: m.metadata?.note || '', requestedAt: m.locked };
+        }
+      }
+      return { status: 'ready', snapshot: null };
+    }
+
+    async function refresh() {
+      if (!live) { render($('demoState').value); return; }
+      $('app').classList.add('busy');
+      try {
+        current = await detect();
+        renderLive();
+      } catch (e) {
+        toast(e.message.includes('401') ? 'Not authorized (401). Sign in to the sidekick for this site, then Refresh.' : `Couldn't load: ${e.message}`, true);
+      } finally {
+        $('app').classList.remove('busy');
+      }
+    }
+
+    function renderLive() {
+      const s = current || { status: 'ready' };
+      const isPending = s.status === 'pending';
+      const badge = $('stateBadge');
+      badge.className = 'badge ' + (isPending ? 'pending' : 'draft');
+      badge.textContent = isPending ? 'Pending review' : 'Ready';
+      // In a solo demo the signed-in user is both author and approver:
+      // show the approval bar whenever something is pending.
+      $('approvalBar').classList.toggle('hidden', !isPending);
+      if (isPending) {
+        $('reqBy').textContent = `Requested by ${s.requestedBy}`;
+        $('reqNote').textContent = s.note ? `"${s.note}"` : '(no note)';
+        $('snapName').textContent = s.snapshot;
+      }
+      $('requestForm').classList.toggle('hidden', isPending);
+      $('requestPending').classList.toggle('hidden', !isPending);
+      $('reqPrimary').textContent = isPending ? '' : 'next step';
+      if (ctx.email) { $('approverName').textContent = ctx.email; $('approverName2').textContent = ctx.email; }
+    }
+
+    // Demo renderer (standalone only)
     function render(state) {
       const [role, status] = state.split('-');
+      const isApprover = role === 'approver', isPending = status === 'pending', isPublished = state === 'published';
       const badge = $('stateBadge');
-      const isApprover = role === 'approver';
-      const isPending = status === 'pending';
-      const isPublished = state === 'published';
-
-      // status badge
       badge.className = 'badge ' + (isPublished ? 'published' : isPending ? 'pending' : 'draft');
       badge.textContent = isPublished ? 'Published' : isPending ? 'Pending review' : 'Draft';
-
-      // approval bar: approver + pending only
       $('approvalBar').classList.toggle('hidden', !(isApprover && isPending));
-
-      // request section: authors only; hide entirely for approver view
       $('requestSec').classList.toggle('hidden', isApprover);
-      // author draft => form + primary emphasis; author pending => pending controls
       $('requestForm').classList.toggle('hidden', isPending || isPublished);
       $('requestPending').classList.toggle('hidden', !isPending);
       $('reqPrimary').textContent = (role === 'author' && status === 'draft') ? 'next step' : '';
       $('requestSec').classList.toggle('dim', isPublished);
-
       $('lastPub').textContent = isPublished ? 'Just now' : 'Last published 3d ago';
     }
 
-    // Wire actions (stubs for Phase 1).
+    // --- Live workflow actions ---
+    async function doRequest() {
+      const note = $('reqComment').value.trim();
+      const name = `rp-${slug()}-${stamp()}`;
+      $('app').classList.add('busy'); toast('Previewing and capturing snapshot…');
+      try {
+        // 1. ensure the page is previewed so the snapshot captures current content
+        await adminFetch(`/preview/${ctx.org}/${ctx.repo}/main${ctx.path}`, { method: 'POST' });
+        // 2. create the snapshot
+        let res = await adminFetch(`/snapshot/${ctx.org}/${ctx.repo}/main/${name}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: `Request: ${ctx.path}`, description: note, resources: [], metadata: { requestPath: ctx.path, requestedBy: ctx.email || 'author', note } }),
+        });
+        if (!res.ok) throw new Error(`create ${res.status}`);
+        // 3. add this page only
+        res = await adminFetch(`/snapshot/${ctx.org}/${ctx.repo}/main/${name}/*`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paths: [ctx.path] }),
+        });
+        if (!res.ok) throw new Error(`add-page ${res.status}`);
+        // 4. lock + submit for review
+        res = await adminFetch(`/snapshot/${ctx.org}/${ctx.repo}/main/${name}?review=request`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ review: 'request', message: note }),
+        });
+        if (!res.ok) throw new Error(`submit ${res.status}`);
+        toast('Approval requested. Snapshot ' + name);
+        await refresh();
+      } catch (e) {
+        toast(e.message.includes('401') ? 'Not authorized (401). Sign in to the sidekick, then retry.' : `Failed: ${e.message}`, true);
+      } finally { $('app').classList.remove('busy'); }
+    }
+
+    async function doReview(state, label) {
+      if (!current?.snapshot) return;
+      $('app').classList.add('busy'); toast(`${label}…`);
+      try {
+        const res = await adminFetch(`/snapshot/${ctx.org}/${ctx.repo}/main/${current.snapshot}?review=${state}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ review: state, message: '' }),
+        });
+        if (!res.ok) throw new Error(`${state} ${res.status}`);
+        toast(state === 'approve' ? 'Approved and published.' : 'Sent back to author.');
+        await refresh();
+      } catch (e) {
+        toast(`Failed: ${e.message}`, true);
+      } finally { $('app').classList.remove('busy'); }
+    }
+
+    async function doWithdraw() {
+      if (!current?.snapshot) return;
+      $('app').classList.add('busy'); toast('Withdrawing…');
+      try {
+        const res = await adminFetch(`/snapshot/${ctx.org}/${ctx.repo}/main/${current.snapshot}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(`withdraw ${res.status}`);
+        toast('Request withdrawn.');
+        await refresh();
+      } catch (e) { toast(`Failed: ${e.message}`, true); } finally { $('app').classList.remove('busy'); }
+    }
+
+    function reviewEnvUrl() {
+      return current?.snapshot ? `https://${current.snapshot}--main--${ctx.repo}--${ctx.org}.aem.reviews${ctx.path}` : previewUrl();
+    }
+
     document.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-act]');
-      if (!btn) return;
+      const el = e.target.closest('[data-act]');
+      if (!el) return;
       e.preventDefault();
-      const act = btn.dataset.act;
+      const act = el.dataset.act;
+      if (!live) {
+        // demo stubs
+        const map = { request: 'author-pending', approve: 'published', sendback: 'author-draft', withdraw: 'author-draft' };
+        if (act === 'preview') { window.open(previewUrl(), '_blank'); return; }
+        if (map[act]) { $('demoState').value = map[act]; render(map[act]); }
+        toast('Demo mode — open inside DA for live actions.');
+        return;
+      }
       switch (act) {
         case 'preview': window.open(previewUrl(), '_blank'); break;
-        case 'diff': toast('Diff view — wiring in phase 3'); break;
-        case 'request': toast('Request sent (stub). Phase 2 creates the snapshot + routes to the approver.'); $('demoState').value = 'author-pending'; render('author-pending'); break;
-        case 'approve': toast('Approve + publish (stub). Phase 2 publishes the snapshot.'); $('demoState').value = 'published'; render('published'); break;
-        case 'sendback': toast('Sent back (stub). Author is notified with your reason.'); $('demoState').value = 'author-draft'; render('author-draft'); break;
-        case 'withdraw': toast('Request withdrawn (stub).'); $('demoState').value = 'author-draft'; render('author-draft'); break;
-        case 'resend': toast('Reminder resent (stub).'); break;
-        case 'rollout': toast('Opening rollout manager — link wired in phase 4'); break;
-        case 'translate': toast('Manage translations — link wired in phase 4'); break;
-        case 'history': toast('Approval history — audit log lands in phase 5'); break;
+        case 'review': window.open(reviewEnvUrl(), '_blank'); break;
+        case 'request': doRequest(); break;
+        case 'approve': doReview('approve', 'Approving'); break;
+        case 'sendback': doReview('reject', 'Sending back'); break;
+        case 'withdraw': doWithdraw(); break;
+        case 'refresh': refresh(); break;
+        case 'diff': toast('Diff view — phase 3'); break;
+        case 'rollout': toast('Rollout deep-link — phase 4'); break;
+        case 'translate': toast('Translations — phase 4'); break;
         default: break;
       }
     });
@@ -250,7 +370,7 @@
     $('demoState').addEventListener('change', (e) => render(e.target.value));
 
     await initSDK();
-    render($('demoState').value);
+    if (live) { await refresh(); } else { render($('demoState').value); }
   </script>
 </body>
 </html>
