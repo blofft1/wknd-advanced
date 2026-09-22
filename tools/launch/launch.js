@@ -31,6 +31,11 @@ const normalizePath = (p) => {
   return withSlash.replace(/\.html$/, '');
 };
 
+const esc = (s) => (s || '')
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
+
 const srcUrl = (path, ext = 'html') => `${DA_ORIGIN}/source/${ctx.org}/${ctx.repo}${path}.${ext}`;
 const previewUrl = (path) => `https://main--${ctx.repo}--${ctx.org}.aem.page${path}`;
 const canvasUrl = (path) => `https://da.live/canvas#/${ctx.org}/${ctx.repo}${path}`;
@@ -182,10 +187,29 @@ function render() {
     wrap.classList.remove('lx-hidden');
     wrap.querySelector('.lx-links').innerHTML = `
       <a class="lx-link" href="${canvasUrl(bp)}" target="_blank" rel="noopener">✏️ Edit branch</a>
-      <a class="lx-link" href="${previewUrl(bp)}" target="_blank" rel="noopener">👁 Preview branch</a>
       <a class="lx-link" href="${canvasUrl(ctx.path)}" target="_blank" rel="noopener">✏️ Edit original</a>
-      <a class="lx-link" href="${previewUrl(ctx.path)}" target="_blank" rel="noopener">👁 Preview original (older version)</a>
+      <a class="lx-link" id="lx-diff" href="#">🔀 View Diff</a>
+      <div id="lx-diff-panel" class="lx-diff lx-hidden"></div>
     `;
+
+    app.querySelector('#lx-diff').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const panel = app.querySelector('#lx-diff-panel');
+      if (!panel.classList.contains('lx-hidden')) { panel.classList.add('lx-hidden'); return; }
+      panel.classList.remove('lx-hidden');
+      panel.innerHTML = '<p class="lx-note">Loading diff…</p>';
+      try {
+        const [orig, branch] = await Promise.all([readSource(ctx.path), readSource(bp)]);
+        panel.innerHTML = `
+          <div class="lx-diff-cols">
+            <div><h3>Original</h3><pre>${esc(orig)}</pre></div>
+            <div><h3>Branch</h3><pre>${esc(branch)}</pre></div>
+          </div>
+          <p class="lx-note">Raw source, side by side. Highlighted block-level diff coming soon.</p>`;
+      } catch (err) {
+        panel.innerHTML = `<p class="lx-note">Diff preview unavailable (${err.message}). Highlighted diff coming soon.</p>`;
+      }
+    });
   }
 
   app.querySelector('#lx-schedule').addEventListener('click', async () => {

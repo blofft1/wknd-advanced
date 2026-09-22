@@ -156,6 +156,41 @@ body {
   background: var(--lx-soft);
 }
 
+.lx-diff {
+  margin-top: 10px;
+  border: 1px solid var(--lx-line);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--lx-soft);
+}
+
+.lx-diff-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.lx-diff-cols h3 {
+  font-size: 12px;
+  margin: 0 0 6px;
+  color: var(--lx-sub);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.lx-diff-cols pre {
+  max-height: 260px;
+  overflow: auto;
+  margin: 0;
+  padding: 10px;
+  border-radius: 6px;
+  background: #0e1116;
+  color: #d7e0ea;
+  font-size: 11px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .lx-divider {
   height: 1px;
   background: var(--lx-line);
