@@ -1,0 +1,206 @@
+:root {
+  --lx-accent: #3b63fb;
+  --lx-accent-deep: #2748d8;
+  --lx-ink: #1a1a1a;
+  --lx-sub: #6b6b6b;
+  --lx-line: #e4e4e4;
+  --lx-bg: #fff;
+  --lx-soft: #f6f7fb;
+  --lx-ok: #0a7c42;
+  --lx-warn: #b8860b;
+  --lx-err: #c0392b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  color: var(--lx-ink);
+  background: var(--lx-bg);
+  font-size: 14px;
+}
+
+#launch-app {
+  padding: 16px;
+  max-width: 520px;
+}
+
+.loading {
+  color: var(--lx-sub);
+  padding: 24px 8px;
+}
+
+.lx-head h1 {
+  font-size: 18px;
+  margin: 0 0 2px;
+}
+
+.lx-page {
+  margin: 0 0 12px;
+  color: var(--lx-sub);
+  font-size: 12px;
+}
+
+.lx-page code,
+.lx-hint code,
+.lx-note code {
+  background: var(--lx-soft);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.lx-card {
+  border: 1px solid var(--lx-line);
+  border-radius: 10px;
+  padding: 14px;
+  margin: 0 0 14px;
+  background: var(--lx-bg);
+}
+
+.lx-h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--lx-sub);
+  margin: 0 0 10px;
+}
+
+.lx-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 8px 0 4px;
+}
+
+.lx-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--lx-line);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.lx-input:focus {
+  outline: none;
+  border-color: var(--lx-accent);
+  box-shadow: 0 0 0 2px rgb(59 99 251 / 15%);
+}
+
+.lx-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 9px 14px;
+  border: 1px solid var(--lx-line);
+  border-radius: 8px;
+  background: var(--lx-bg);
+  color: var(--lx-ink);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.lx-btn:hover {
+  background: var(--lx-soft);
+}
+
+.lx-btn-primary {
+  background: var(--lx-accent);
+  border-color: var(--lx-accent);
+  color: #fff;
+}
+
+.lx-btn-primary:hover {
+  background: var(--lx-accent-deep);
+}
+
+.lx-btn-ghost {
+  border-style: dashed;
+  color: var(--lx-sub);
+}
+
+.lx-hint,
+.lx-note {
+  font-size: 12px;
+  color: var(--lx-sub);
+  margin: 8px 0 0;
+  line-height: 1.45;
+}
+
+.lx-note {
+  border-top: 1px dashed var(--lx-line);
+  padding-top: 10px;
+  margin-top: 12px;
+}
+
+.lx-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lx-link {
+  display: block;
+  padding: 9px 12px;
+  border: 1px solid var(--lx-line);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--lx-accent-deep);
+  font-weight: 600;
+}
+
+.lx-link:hover {
+  background: var(--lx-soft);
+}
+
+.lx-divider {
+  height: 1px;
+  background: var(--lx-line);
+  margin: 14px 0;
+}
+
+.lx-cron {
+  background: #0e1116;
+  color: #d7e0ea;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  margin-top: 12px;
+}
+
+.lx-hidden {
+  display: none;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  background: var(--lx-ink);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  max-width: 90%;
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.toast.success {
+  background: var(--lx-ok);
+}
+
+.toast.warn {
+  background: var(--lx-warn);
+}
+
+.toast.error {
+  background: var(--lx-err);
+}
