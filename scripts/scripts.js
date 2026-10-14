@@ -25,6 +25,7 @@ import {
 import { getAllMetadata, getLocale, isUE } from './shared.js';
 import { initPageSchemas } from './schema.js';
 import dynamicBlocks from '../blocks/dynamic/index.js';
+import registerPreflightChecks from './preflight.js';
 
 const AUDIENCES = {
   mobile: () => window.innerWidth < 600,
@@ -406,6 +407,9 @@ async function loadLazy(doc) {
   await dynamicBlocks(main);
   applyContentProtection();
   decorateCodeBlocks(main);
+
+  // Define window.aem.preflight() for Experience Context site code checks (do not invoke).
+  registerPreflightChecks();
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
