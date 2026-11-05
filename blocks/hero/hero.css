@@ -294,3 +294,127 @@
   background-clip: unset;
   color: var(--color-rust);
 }
+
+/* ------------------------------------------------------------------
+   WKND Adventures variants: .hero.winter and .hero.summer
+   Palette: deep-pine #0f1a14, pine-shadow #3d4f45, ember #c8551a,
+   trail-amber #e8651a, bone #f5f0e8, sand #f0ece4, snow #fff.
+   Display/body fonts fall back to the site stack until Syncopate and
+   Instrument Sans are loaded globally.
+   ------------------------------------------------------------------ */
+.hero.winter,
+.hero.summer {
+  --hero-font-display: 'Syncopate', var(--font-family-mono);
+  --hero-font-body: 'Instrument Sans', system-ui, sans-serif;
+  --hero-bone: #f5f0e8;
+  --hero-pine: #0f1a14;
+  --hero-pine-shadow: #3d4f45;
+}
+
+.hero.winter {
+  --hero-bg: var(--hero-pine);
+  --hero-cta: #c8551a;
+  --hero-cta-hover: #e8651a;
+
+  background-color: var(--hero-bg);
+}
+
+.hero.summer {
+  --hero-bg: #f0ece4;
+  --hero-cta: #e8651a;
+  --hero-cta-hover: #c8551a;
+
+  background-color: var(--hero-bg);
+}
+
+/* Image + overlay */
+/* stylelint-disable no-descending-specificity -- variants intentionally follow the base/dark rules */
+.hero.winter > div:first-child picture img,
+.hero.summer > div:first-child picture img {
+  opacity: 1;
+}
+
+/* Soft pine-to-transparent overlay for text legibility */
+.hero.winter > div:first-child::before,
+.hero.summer > div:first-child::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero.winter > div:first-child::before {
+  background: linear-gradient(to right, rgb(15 26 20 / 88%) 0%, rgb(15 26 20 / 55%) 55%, transparent 100%);
+}
+
+.hero.summer > div:first-child::before {
+  background: linear-gradient(to right, rgb(61 79 69 / 70%) 0%, rgb(61 79 69 / 35%) 55%, transparent 100%);
+}
+
+/* Bottom fade into the block background */
+:root .hero.winter > div:first-child::after,
+:root .hero.summer > div:first-child::after {
+  height: 30%;
+  background: linear-gradient(to bottom, transparent 0%, var(--hero-bg) 100%);
+}
+
+/* Type */
+.hero.winter h1,
+.hero.summer h1 {
+  font-family: var(--hero-font-display);
+  font-size: clamp(1.75rem, 6vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--hero-bone);
+}
+
+:root .hero.winter h1 em,
+:root .hero.summer h1 em {
+  background: none;
+  background-clip: unset;
+  font-style: normal;
+  color: var(--hero-cta-hover);
+}
+
+.hero.winter .hero-tagline,
+.hero.summer .hero-tagline,
+.hero.winter p:not(.button-container, .hero-tagline),
+.hero.summer p:not(.button-container, .hero-tagline) {
+  font-family: var(--hero-font-body);
+  color: var(--hero-bone);
+}
+
+/* Trail-sign button: rounded, hard-offset shadow */
+.hero.winter p.button-container a.button:any-link,
+.hero.summer p.button-container a.button:any-link {
+  padding: 14px 28px;
+  border: 2px solid var(--hero-pine);
+  border-radius: 12px;
+  background-color: var(--hero-cta);
+  box-shadow: 4px 4px 0 var(--hero-pine);
+  font-family: var(--hero-font-body);
+  font-weight: 700;
+  color: #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.hero.winter p.button-container a.button:any-link:hover,
+.hero.winter p.button-container a.button:any-link:focus-visible,
+.hero.summer p.button-container a.button:any-link:hover,
+.hero.summer p.button-container a.button:any-link:focus-visible {
+  background-color: var(--hero-cta-hover);
+  border-color: var(--hero-pine);
+  box-shadow: 2px 2px 0 var(--hero-pine);
+  transform: translate(2px, 2px);
+}
+
+@media (width >= 900px) {
+  .hero.winter h1,
+  .hero.summer h1 {
+    font-size: clamp(2.5rem, 4vw, 4rem);
+  }
+}
+
+/* stylelint-enable no-descending-specificity */
