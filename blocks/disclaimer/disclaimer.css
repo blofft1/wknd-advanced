@@ -1,0 +1,21 @@
+/* Disclaimer — collapsible fine print */
+
+.disclaimer details {
+  border-top: 1px solid light-dark(var(--color-gray-200), rgb(245 242 237 / 15%));
+  padding-top: var(--space-m);
+  font-size: var(--body-font-size-s);
+  color: light-dark(var(--color-gray-700), var(--color-muted));
+}
+
+.disclaimer summary {
+  cursor: pointer;
+  font-family: var(--font-family-mono);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.disclaimer details p {
+  margin: var(--space-s) 0 0;
+  line-height: 1.55;
+}
