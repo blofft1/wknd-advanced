@@ -95,6 +95,106 @@ function checkOnBrandCopy() {
   });
 }
 
+/* --- demo checks: business rule, accessibility, brand voice, applicability --- */
+
+const metaContent = (name) => document.querySelector(`meta[name="${name}"]`)?.content?.trim();
+
+// A destination page is under /destinations/ or declares template: destination.
+function isDestinationPage() {
+  return window.location.pathname.includes('/destinations/')
+    || metaContent('template') === 'destination';
+}
+
+// Business rule: destination pages must carry price and season metadata.
+function checkDestinationMetadata() {
+  const id = 'wknd-destination-metadata';
+  const title = 'Destination pages have price and season metadata';
+  if (!isDestinationPage()) {
+    return new SiteCodeCheckResult({
+      id,
+      title,
+      alignment: Alignment.NA,
+      reasoning: 'Not a destination page (no /destinations/ path or destination template).',
+    });
+  }
+  const missing = ['price', 'season'].filter((name) => !metaContent(name));
+  return new SiteCodeCheckResult({
+    id,
+    title,
+    alignment: missing.length ? Alignment.NO : Alignment.YES,
+    reasoning: missing.length
+      ? `Missing metadata: ${missing.join(', ')}.`
+      : 'Price and season metadata are present.',
+    suggestions: missing.length
+      ? `Add ${missing.map((m) => `"${m}"`).join(' and ')} row(s) to the page Metadata table.`
+      : undefined,
+  });
+}
+
+// Accessibility: headings must not skip levels (e.g. H2 straight to H4).
+function checkHeadingHierarchy() {
+  const levels = [...document.querySelectorAll('main h1, main h2, main h3, main h4, main h5, main h6')]
+    .map((h) => Number(h.tagName[1]));
+  const skips = [];
+  for (let i = 1; i < levels.length; i += 1) {
+    if (levels[i] - levels[i - 1] > 1) skips.push(`H${levels[i - 1]} to H${levels[i]}`);
+  }
+  return new SiteCodeCheckResult({
+    id: 'wknd-heading-hierarchy',
+    title: 'Heading levels do not skip',
+    alignment: skips.length ? Alignment.NO : Alignment.YES,
+    reasoning: skips.length
+      ? `Heading levels skip: ${skips.join(', ')}.`
+      : `${levels.length} heading(s) follow a valid hierarchy.`,
+    suggestions: skips.length
+      ? 'Use consecutive heading levels so screen reader users can follow the page outline.'
+      : undefined,
+  });
+}
+
+// Brand voice: calls to action must be action-oriented, not generic.
+const GENERIC_CTAS = ['click here', 'learn more', 'read more', 'here', 'submit'];
+
+function checkCtaWording() {
+  const generic = [...document.querySelectorAll('main a.button, main .button-container a')]
+    .map((a) => a.textContent.trim().toLowerCase())
+    .filter((text) => GENERIC_CTAS.includes(text));
+  return new SiteCodeCheckResult({
+    id: 'wknd-cta-wording',
+    title: 'Calls to action use on-brand wording',
+    alignment: generic.length ? Alignment.NO : Alignment.YES,
+    reasoning: generic.length
+      ? `Generic button text found: ${[...new Set(generic)].map((t) => `"${t}"`).join(', ')}.`
+      : 'All buttons use descriptive, action-oriented wording.',
+    suggestions: generic.length
+      ? 'Use action wording such as "Book your trip" or "Explore the trail".'
+      : undefined,
+  });
+}
+
+// Applicability: only checks a hero image when the page has one (otherwise NA).
+function checkHeroImageAlt() {
+  const id = 'wknd-hero-image-alt';
+  const title = 'Hero image has alt text';
+  const hero = document.querySelector('main .hero img');
+  if (!hero) {
+    return new SiteCodeCheckResult({
+      id,
+      title,
+      alignment: Alignment.NA,
+      reasoning: 'This page has no hero image.',
+    });
+  }
+  const ok = !!hero.getAttribute('alt')?.trim();
+  return new SiteCodeCheckResult({
+    id,
+    title,
+    alignment: ok ? Alignment.YES : Alignment.NO,
+    reasoning: ok ? 'Hero image has alt text.' : 'Hero image has no alt text.',
+    suggestions: ok ? undefined : 'Describe the hero image for screen reader users.',
+  });
+}
+
 /* --- register (define, do not invoke) --- */
 
 export default function registerPreflightChecks() {
@@ -103,5 +203,9 @@ export default function registerPreflightChecks() {
     checkMetaDescription(),
     checkImageAlt(),
     checkOnBrandCopy(),
+    checkDestinationMetadata(),
+    checkHeadingHierarchy(),
+    checkCtaWording(),
+    checkHeroImageAlt(),
   ];
 }
